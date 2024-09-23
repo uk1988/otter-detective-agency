@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package case;
+
+option go_package = "oda/api/proto";
+
+service CaseService {
+  rpc GetCase(GetCaseRequest) returns (Case) {}
+  rpc ListLocations(ListLocationsRequest) returns (LocationList) {}
+}
+
+message Case {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+}
+
+message GetCaseRequest {}
+
+message Location {
+  string id = 1;
+  string name = 2;
+}
+
+message ListLocationsRequest {
+  string case_id = 1;
+}
+
+message LocationList {
+  repeated Location locations = 1;
+}

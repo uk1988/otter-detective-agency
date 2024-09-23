@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package evidence;
+
+option go_package = "oda/api/proto";
+
+service EvidenceService {
+  rpc ListEvidence(ListEvidenceRequest) returns (EvidenceList) {}
+  rpc CollectEvidence(CollectEvidenceRequest) returns (Evidence) {}
+}
+
+message Evidence {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+}
+
+message ListEvidenceRequest {
+  string location_id = 1;
+}
+
+message EvidenceList {
+  repeated Evidence evidence = 1;
+}
+
+message CollectEvidenceRequest {
+  string evidence_id = 1;
+  string player_id = 2;
+}

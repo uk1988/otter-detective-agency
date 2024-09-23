@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package deduction;
+
+option go_package = "oda/api/proto";
+
+service DeductionService {
+  rpc SolveCase(SolveCaseRequest) returns (CaseSolution) {}
+}
+
+message SolveCaseRequest {
+  string case_id = 1;
+  string player_id = 2;
+  string solution_id = 3;
+}
+
+message CaseSolution {
+  bool is_correct = 1;
+  string explanation = 2;
+}

@@ -1,0 +1,32 @@
+// api/proto/player.proto
+
+syntax = "proto3";
+
+package player;
+
+option go_package = "oda/api/proto";
+
+service PlayerService {
+  rpc CreatePlayer(CreatePlayerRequest) returns (Player) {}
+  rpc GetPlayer(GetPlayerRequest) returns (Player) {}
+  rpc UpdatePlayerProgress(UpdatePlayerProgressRequest) returns (Player) {}
+}
+
+message Player {
+  string id = 1;
+  string name = 2;
+  int32 cases_solved = 3;
+}
+
+message CreatePlayerRequest {
+  string name = 1;
+}
+
+message GetPlayerRequest {
+  string id = 1;
+}
+
+message UpdatePlayerProgressRequest {
+  string id = 1;
+  bool case_solved = 2;
+}

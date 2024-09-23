@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package interrogation;
+
+option go_package = "oda/api/proto";
+
+service InterrogationService {
+  rpc GetWitnessStatement(WitnessRequest) returns (WitnessStatement) {}
+  rpc InterrogateSuspect(InterrogationRequest) returns (SuspectResponse) {}
+}
+
+message WitnessRequest {
+  string location_id = 1;
+}
+
+message WitnessStatement {
+  string statement = 1;
+}
+
+message InterrogationRequest {
+  string suspect_id = 1;
+  string question_id = 2;
+}
+
+message SuspectResponse {
+  string response = 1;
+}
