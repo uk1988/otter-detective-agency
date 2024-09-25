@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package evidence;
+package evidencepb;
 
-option go_package = "oda/api/proto";
+option go_package = "oda/api/proto/evidence;evidencepb";
 
 service EvidenceService {
   rpc ListEvidence(ListEvidenceRequest) returns (EvidenceList) {}

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package case;
+package casepb;
 
-option go_package = "oda/api/proto";
+option go_package = "oda/api/proto/case;casepb";
 
 service CaseService {
   rpc GetCase(GetCaseRequest) returns (Case) {}
