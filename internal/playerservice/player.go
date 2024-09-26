@@ -2,7 +2,7 @@ package playerservice
 
 import (
 	"context"
-	"oda/api/proto/player"
+	playerpb "oda/api/proto/player"
 	"sync"
 
 	"github.com/google/uuid"
@@ -11,23 +11,23 @@ import (
 )
 
 type Server struct {
-	player.UnimplementedPlayerServiceServer
+	playerpb.UnimplementedPlayerServiceServer
 	mu      sync.Mutex
-	players map[string]*player.Player
+	players map[string]*playerpb.Player
 }
 
 func NewServer() *Server {
 	return &Server{
-		players: make(map[string]*player.Player),
+		players: make(map[string]*playerpb.Player),
 	}
 }
 
-func (s *Server) CreatePlayer(ctx context.Context, req *player.CreatePlayerRequest) (*player.Player, error) {
+func (s *Server) CreatePlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	id := uuid.New().String()
-	player := &player.Player{
+	player := &playerpb.Player{
 		Id:          id,
 		Name:        req.Name,
 		CasesSolved: 0,
@@ -36,7 +36,7 @@ func (s *Server) CreatePlayer(ctx context.Context, req *player.CreatePlayerReque
 	return player, nil
 }
 
-func (s *Server) GetPlayer(ctx context.Context, req *player.GetPlayerRequest) (*player.Player, error) {
+func (s *Server) GetPlayer(ctx context.Context, req *playerpb.GetPlayerRequest) (*playerpb.Player, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -47,7 +47,7 @@ func (s *Server) GetPlayer(ctx context.Context, req *player.GetPlayerRequest) (*
 	return player, nil
 }
 
-func (s *Server) UpdatePlayerProgress(ctx context.Context, req *player.UpdatePlayerProgressRequest) (*player.Player, error) {
+func (s *Server) UpdatePlayerProgress(ctx context.Context, req *playerpb.UpdatePlayerProgressRequest) (*playerpb.Player, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

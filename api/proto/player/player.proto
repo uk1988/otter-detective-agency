@@ -2,9 +2,9 @@
 
 syntax = "proto3";
 
-package player;
+package playerpb;
 
-option go_package = "oda/api/proto/player;player";
+option go_package = "oda/api/proto/player;playerpb";
 
 service PlayerService {
   rpc CreatePlayer(CreatePlayerRequest) returns (Player) {}

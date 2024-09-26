@@ -6,7 +6,7 @@
 // - protoc             v5.28.0
 // source: player/player.proto
 
-package player
+package playerpb
 
 import (
 	context "context"
@@ -21,9 +21,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PlayerService_CreatePlayer_FullMethodName         = "/player.PlayerService/CreatePlayer"
-	PlayerService_GetPlayer_FullMethodName            = "/player.PlayerService/GetPlayer"
-	PlayerService_UpdatePlayerProgress_FullMethodName = "/player.PlayerService/UpdatePlayerProgress"
+	PlayerService_CreatePlayer_FullMethodName         = "/playerpb.PlayerService/CreatePlayer"
+	PlayerService_GetPlayer_FullMethodName            = "/playerpb.PlayerService/GetPlayer"
+	PlayerService_UpdatePlayerProgress_FullMethodName = "/playerpb.PlayerService/UpdatePlayerProgress"
 )
 
 // PlayerServiceClient is the client API for PlayerService service.
@@ -178,7 +178,7 @@ func _PlayerService_UpdatePlayerProgress_Handler(srv interface{}, ctx context.Co
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PlayerService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "player.PlayerService",
+	ServiceName: "playerpb.PlayerService",
 	HandlerType: (*PlayerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
