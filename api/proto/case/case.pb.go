@@ -83,16 +83,73 @@ func (x *Case) GetDescription() string {
 	return ""
 }
 
+type CreateCaseRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Title       string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+}
+
+func (x *CreateCaseRequest) Reset() {
+	*x = CreateCaseRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_case_case_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateCaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCaseRequest) ProtoMessage() {}
+
+func (x *CreateCaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_case_case_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCaseRequest.ProtoReflect.Descriptor instead.
+func (*CreateCaseRequest) Descriptor() ([]byte, []int) {
+	return file_case_case_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *CreateCaseRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateCaseRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
 type GetCaseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *GetCaseRequest) Reset() {
 	*x = GetCaseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_case_case_proto_msgTypes[1]
+		mi := &file_case_case_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -105,7 +162,7 @@ func (x *GetCaseRequest) String() string {
 func (*GetCaseRequest) ProtoMessage() {}
 
 func (x *GetCaseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_case_case_proto_msgTypes[1]
+	mi := &file_case_case_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -118,74 +175,24 @@ func (x *GetCaseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCaseRequest.ProtoReflect.Descriptor instead.
 func (*GetCaseRequest) Descriptor() ([]byte, []int) {
-	return file_case_case_proto_rawDescGZIP(), []int{1}
-}
-
-type Location struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Id   string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-}
-
-func (x *Location) Reset() {
-	*x = Location{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_case_case_proto_msgTypes[2]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *Location) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Location) ProtoMessage() {}
-
-func (x *Location) ProtoReflect() protoreflect.Message {
-	mi := &file_case_case_proto_msgTypes[2]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Location.ProtoReflect.Descriptor instead.
-func (*Location) Descriptor() ([]byte, []int) {
 	return file_case_case_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Location) GetId() string {
+func (x *GetCaseRequest) GetId() string {
 	if x != nil {
 		return x.Id
 	}
 	return ""
 }
 
-func (x *Location) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type ListLocationsRequest struct {
+type ListCasesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
-
-	CaseId string `protobuf:"bytes,1,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
 }
 
-func (x *ListLocationsRequest) Reset() {
-	*x = ListLocationsRequest{}
+func (x *ListCasesRequest) Reset() {
+	*x = ListCasesRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_case_case_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -193,13 +200,13 @@ func (x *ListLocationsRequest) Reset() {
 	}
 }
 
-func (x *ListLocationsRequest) String() string {
+func (x *ListCasesRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListLocationsRequest) ProtoMessage() {}
+func (*ListCasesRequest) ProtoMessage() {}
 
-func (x *ListLocationsRequest) ProtoReflect() protoreflect.Message {
+func (x *ListCasesRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_case_case_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -211,28 +218,21 @@ func (x *ListLocationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListLocationsRequest.ProtoReflect.Descriptor instead.
-func (*ListLocationsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListCasesRequest.ProtoReflect.Descriptor instead.
+func (*ListCasesRequest) Descriptor() ([]byte, []int) {
 	return file_case_case_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ListLocationsRequest) GetCaseId() string {
-	if x != nil {
-		return x.CaseId
-	}
-	return ""
-}
-
-type LocationList struct {
+type CaseList struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Locations []*Location `protobuf:"bytes,1,rep,name=locations,proto3" json:"locations,omitempty"`
+	Cases []*Case `protobuf:"bytes,1,rep,name=cases,proto3" json:"cases,omitempty"`
 }
 
-func (x *LocationList) Reset() {
-	*x = LocationList{}
+func (x *CaseList) Reset() {
+	*x = CaseList{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_case_case_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -240,13 +240,13 @@ func (x *LocationList) Reset() {
 	}
 }
 
-func (x *LocationList) String() string {
+func (x *CaseList) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*LocationList) ProtoMessage() {}
+func (*CaseList) ProtoMessage() {}
 
-func (x *LocationList) ProtoReflect() protoreflect.Message {
+func (x *CaseList) ProtoReflect() protoreflect.Message {
 	mi := &file_case_case_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -258,14 +258,234 @@ func (x *LocationList) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use LocationList.ProtoReflect.Descriptor instead.
-func (*LocationList) Descriptor() ([]byte, []int) {
+// Deprecated: Use CaseList.ProtoReflect.Descriptor instead.
+func (*CaseList) Descriptor() ([]byte, []int) {
 	return file_case_case_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *LocationList) GetLocations() []*Location {
+func (x *CaseList) GetCases() []*Case {
 	if x != nil {
-		return x.Locations
+		return x.Cases
+	}
+	return nil
+}
+
+type PlayerCase struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerId string `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	CaseId   string `protobuf:"bytes,2,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
+	Status   string `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+}
+
+func (x *PlayerCase) Reset() {
+	*x = PlayerCase{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_case_case_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *PlayerCase) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PlayerCase) ProtoMessage() {}
+
+func (x *PlayerCase) ProtoReflect() protoreflect.Message {
+	mi := &file_case_case_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PlayerCase.ProtoReflect.Descriptor instead.
+func (*PlayerCase) Descriptor() ([]byte, []int) {
+	return file_case_case_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *PlayerCase) GetPlayerId() string {
+	if x != nil {
+		return x.PlayerId
+	}
+	return ""
+}
+
+func (x *PlayerCase) GetCaseId() string {
+	if x != nil {
+		return x.CaseId
+	}
+	return ""
+}
+
+func (x *PlayerCase) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+type AssignCaseRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerId string `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	CaseId   string `protobuf:"bytes,2,opt,name=case_id,json=caseId,proto3" json:"case_id,omitempty"`
+}
+
+func (x *AssignCaseRequest) Reset() {
+	*x = AssignCaseRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_case_case_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AssignCaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AssignCaseRequest) ProtoMessage() {}
+
+func (x *AssignCaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_case_case_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AssignCaseRequest.ProtoReflect.Descriptor instead.
+func (*AssignCaseRequest) Descriptor() ([]byte, []int) {
+	return file_case_case_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AssignCaseRequest) GetPlayerId() string {
+	if x != nil {
+		return x.PlayerId
+	}
+	return ""
+}
+
+func (x *AssignCaseRequest) GetCaseId() string {
+	if x != nil {
+		return x.CaseId
+	}
+	return ""
+}
+
+type GetPlayerCaseRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerId string `protobuf:"bytes,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+}
+
+func (x *GetPlayerCaseRequest) Reset() {
+	*x = GetPlayerCaseRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_case_case_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetPlayerCaseRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlayerCaseRequest) ProtoMessage() {}
+
+func (x *GetPlayerCaseRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_case_case_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlayerCaseRequest.ProtoReflect.Descriptor instead.
+func (*GetPlayerCaseRequest) Descriptor() ([]byte, []int) {
+	return file_case_case_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *GetPlayerCaseRequest) GetPlayerId() string {
+	if x != nil {
+		return x.PlayerId
+	}
+	return ""
+}
+
+type GetPlayerCaseResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	PlayerCase *PlayerCase `protobuf:"bytes,1,opt,name=player_case,json=playerCase,proto3" json:"player_case,omitempty"`
+	Case       *Case       `protobuf:"bytes,2,opt,name=case,proto3" json:"case,omitempty"`
+}
+
+func (x *GetPlayerCaseResponse) Reset() {
+	*x = GetPlayerCaseResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_case_case_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetPlayerCaseResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetPlayerCaseResponse) ProtoMessage() {}
+
+func (x *GetPlayerCaseResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_case_case_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetPlayerCaseResponse.ProtoReflect.Descriptor instead.
+func (*GetPlayerCaseResponse) Descriptor() ([]byte, []int) {
+	return file_case_case_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *GetPlayerCaseResponse) GetPlayerCase() *PlayerCase {
+	if x != nil {
+		return x.PlayerCase
+	}
+	return nil
+}
+
+func (x *GetPlayerCaseResponse) GetCase() *Case {
+	if x != nil {
+		return x.Case
 	}
 	return nil
 }
@@ -279,29 +499,62 @@ var file_case_case_proto_rawDesc = []byte{
 	0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
 	0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
 	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65,
-	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x10, 0x0a, 0x0e, 0x47, 0x65, 0x74,
-	0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x2e, 0x0a, 0x08, 0x4c,
-	0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18,
-	0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x22, 0x2f, 0x0a, 0x14, 0x4c,
-	0x69, 0x73, 0x74, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x63, 0x61, 0x73, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x63, 0x61, 0x73, 0x65, 0x49, 0x64, 0x22, 0x3e, 0x0a, 0x0c,
-	0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x2e, 0x0a, 0x09,
-	0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
-	0x10, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x52, 0x09, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x32, 0x87, 0x01, 0x0a,
-	0x0b, 0x43, 0x61, 0x73, 0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x31, 0x0a, 0x07,
-	0x47, 0x65, 0x74, 0x43, 0x61, 0x73, 0x65, 0x12, 0x16, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62,
-	0x2e, 0x47, 0x65, 0x74, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a,
-	0x0c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x43, 0x61, 0x73, 0x65, 0x22, 0x00, 0x12,
-	0x45, 0x0a, 0x0d, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
-	0x12, 0x1c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4c, 0x6f,
-	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x14,
-	0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x4c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
-	0x4c, 0x69, 0x73, 0x74, 0x22, 0x00, 0x42, 0x1b, 0x5a, 0x19, 0x6f, 0x64, 0x61, 0x2f, 0x61, 0x70,
-	0x69, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x63, 0x61, 0x73, 0x65, 0x3b, 0x63, 0x61, 0x73,
-	0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x4b, 0x0a, 0x11, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x14,
+	0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74,
+	0x69, 0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72,
+	0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x20, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x43, 0x61, 0x73,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x12, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74,
+	0x43, 0x61, 0x73, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x2e, 0x0a, 0x08,
+	0x43, 0x61, 0x73, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x22, 0x0a, 0x05, 0x63, 0x61, 0x73, 0x65,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62,
+	0x2e, 0x43, 0x61, 0x73, 0x65, 0x52, 0x05, 0x63, 0x61, 0x73, 0x65, 0x73, 0x22, 0x5a, 0x0a, 0x0a,
+	0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x12, 0x1b, 0x0a, 0x09, 0x70, 0x6c,
+	0x61, 0x79, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70,
+	0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x63, 0x61, 0x73, 0x65, 0x5f,
+	0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x63, 0x61, 0x73, 0x65, 0x49, 0x64,
+	0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x49, 0x0a, 0x11, 0x41, 0x73, 0x73, 0x69,
+	0x67, 0x6e, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a,
+	0x09, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x63, 0x61,
+	0x73, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06, 0x63, 0x61, 0x73,
+	0x65, 0x49, 0x64, 0x22, 0x33, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72,
+	0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x70,
+	0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08,
+	0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x49, 0x64, 0x22, 0x6e, 0x0a, 0x15, 0x47, 0x65, 0x74, 0x50,
+	0x6c, 0x61, 0x79, 0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x12, 0x33, 0x0a, 0x0b, 0x70, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x5f, 0x63, 0x61, 0x73, 0x65,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x12, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e,
+	0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x52, 0x0a, 0x70, 0x6c, 0x61, 0x79,
+	0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x12, 0x20, 0x0a, 0x04, 0x63, 0x61, 0x73, 0x65, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x43, 0x61,
+	0x73, 0x65, 0x52, 0x04, 0x63, 0x61, 0x73, 0x65, 0x32, 0xc1, 0x02, 0x0a, 0x0b, 0x43, 0x61, 0x73,
+	0x65, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x35, 0x0a, 0x0a, 0x43, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x43, 0x61, 0x73, 0x65, 0x12, 0x19, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e,
+	0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x0c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x43, 0x61, 0x73, 0x65, 0x12,
+	0x2f, 0x0a, 0x07, 0x47, 0x65, 0x74, 0x43, 0x61, 0x73, 0x65, 0x12, 0x16, 0x2e, 0x63, 0x61, 0x73,
+	0x65, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x0c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x43, 0x61, 0x73, 0x65,
+	0x12, 0x37, 0x0a, 0x09, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x61, 0x73, 0x65, 0x73, 0x12, 0x18, 0x2e,
+	0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x61, 0x73, 0x65, 0x73,
+	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x10, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62,
+	0x2e, 0x43, 0x61, 0x73, 0x65, 0x4c, 0x69, 0x73, 0x74, 0x12, 0x43, 0x0a, 0x12, 0x41, 0x73, 0x73,
+	0x69, 0x67, 0x6e, 0x43, 0x61, 0x73, 0x65, 0x54, 0x6f, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x12,
+	0x19, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x41, 0x73, 0x73, 0x69, 0x67, 0x6e, 0x43,
+	0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x12, 0x2e, 0x63, 0x61, 0x73,
+	0x65, 0x70, 0x62, 0x2e, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x12, 0x4c,
+	0x0a, 0x0d, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x12,
+	0x1c, 0x2e, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79,
+	0x65, 0x72, 0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e,
+	0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x2e, 0x47, 0x65, 0x74, 0x50, 0x6c, 0x61, 0x79, 0x65, 0x72,
+	0x43, 0x61, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x1b, 0x5a, 0x19,
+	0x6f, 0x64, 0x61, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x63, 0x61,
+	0x73, 0x65, 0x3b, 0x63, 0x61, 0x73, 0x65, 0x70, 0x62, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -316,25 +569,37 @@ func file_case_case_proto_rawDescGZIP() []byte {
 	return file_case_case_proto_rawDescData
 }
 
-var file_case_case_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_case_case_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_case_case_proto_goTypes = []any{
-	(*Case)(nil),                 // 0: casepb.Case
-	(*GetCaseRequest)(nil),       // 1: casepb.GetCaseRequest
-	(*Location)(nil),             // 2: casepb.Location
-	(*ListLocationsRequest)(nil), // 3: casepb.ListLocationsRequest
-	(*LocationList)(nil),         // 4: casepb.LocationList
+	(*Case)(nil),                  // 0: casepb.Case
+	(*CreateCaseRequest)(nil),     // 1: casepb.CreateCaseRequest
+	(*GetCaseRequest)(nil),        // 2: casepb.GetCaseRequest
+	(*ListCasesRequest)(nil),      // 3: casepb.ListCasesRequest
+	(*CaseList)(nil),              // 4: casepb.CaseList
+	(*PlayerCase)(nil),            // 5: casepb.PlayerCase
+	(*AssignCaseRequest)(nil),     // 6: casepb.AssignCaseRequest
+	(*GetPlayerCaseRequest)(nil),  // 7: casepb.GetPlayerCaseRequest
+	(*GetPlayerCaseResponse)(nil), // 8: casepb.GetPlayerCaseResponse
 }
 var file_case_case_proto_depIdxs = []int32{
-	2, // 0: casepb.LocationList.locations:type_name -> casepb.Location
-	1, // 1: casepb.CaseService.GetCase:input_type -> casepb.GetCaseRequest
-	3, // 2: casepb.CaseService.ListLocations:input_type -> casepb.ListLocationsRequest
-	0, // 3: casepb.CaseService.GetCase:output_type -> casepb.Case
-	4, // 4: casepb.CaseService.ListLocations:output_type -> casepb.LocationList
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 0: casepb.CaseList.cases:type_name -> casepb.Case
+	5, // 1: casepb.GetPlayerCaseResponse.player_case:type_name -> casepb.PlayerCase
+	0, // 2: casepb.GetPlayerCaseResponse.case:type_name -> casepb.Case
+	1, // 3: casepb.CaseService.CreateCase:input_type -> casepb.CreateCaseRequest
+	2, // 4: casepb.CaseService.GetCase:input_type -> casepb.GetCaseRequest
+	3, // 5: casepb.CaseService.ListCases:input_type -> casepb.ListCasesRequest
+	6, // 6: casepb.CaseService.AssignCaseToPlayer:input_type -> casepb.AssignCaseRequest
+	7, // 7: casepb.CaseService.GetPlayerCase:input_type -> casepb.GetPlayerCaseRequest
+	0, // 8: casepb.CaseService.CreateCase:output_type -> casepb.Case
+	0, // 9: casepb.CaseService.GetCase:output_type -> casepb.Case
+	4, // 10: casepb.CaseService.ListCases:output_type -> casepb.CaseList
+	5, // 11: casepb.CaseService.AssignCaseToPlayer:output_type -> casepb.PlayerCase
+	8, // 12: casepb.CaseService.GetPlayerCase:output_type -> casepb.GetPlayerCaseResponse
+	8, // [8:13] is the sub-list for method output_type
+	3, // [3:8] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_case_case_proto_init() }
@@ -356,7 +621,7 @@ func file_case_case_proto_init() {
 			}
 		}
 		file_case_case_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*GetCaseRequest); i {
+			switch v := v.(*CreateCaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -368,7 +633,7 @@ func file_case_case_proto_init() {
 			}
 		}
 		file_case_case_proto_msgTypes[2].Exporter = func(v any, i int) any {
-			switch v := v.(*Location); i {
+			switch v := v.(*GetCaseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -380,7 +645,7 @@ func file_case_case_proto_init() {
 			}
 		}
 		file_case_case_proto_msgTypes[3].Exporter = func(v any, i int) any {
-			switch v := v.(*ListLocationsRequest); i {
+			switch v := v.(*ListCasesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -392,7 +657,55 @@ func file_case_case_proto_init() {
 			}
 		}
 		file_case_case_proto_msgTypes[4].Exporter = func(v any, i int) any {
-			switch v := v.(*LocationList); i {
+			switch v := v.(*CaseList); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_case_case_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*PlayerCase); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_case_case_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*AssignCaseRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_case_case_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*GetPlayerCaseRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_case_case_proto_msgTypes[8].Exporter = func(v any, i int) any {
+			switch v := v.(*GetPlayerCaseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -410,7 +723,7 @@ func file_case_case_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_case_case_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

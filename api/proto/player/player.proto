@@ -1,5 +1,3 @@
-// api/proto/player.proto
-
 syntax = "proto3";
 
 package playerpb;
@@ -7,9 +5,9 @@ package playerpb;
 option go_package = "oda/api/proto/player;playerpb";
 
 service PlayerService {
-  rpc CreatePlayer(CreatePlayerRequest) returns (Player) {}
-  rpc GetPlayer(GetPlayerRequest) returns (Player) {}
-  rpc UpdatePlayerProgress(UpdatePlayerProgressRequest) returns (Player) {}
+  rpc CreatePlayer(CreatePlayerRequest) returns (Player);
+  rpc GetPlayer(GetPlayerRequest) returns (Player);
+  rpc UpdatePlayerProgress(UpdatePlayerProgressRequest) returns (Player);
 }
 
 message Player {

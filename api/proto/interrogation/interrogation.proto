@@ -5,23 +5,36 @@ package interrogationpb;
 option go_package = "oda/api/proto/interrogation;interrogationpb";
 
 service InterrogationService {
-  rpc GetWitnessStatement(WitnessRequest) returns (WitnessStatement) {}
-  rpc InterrogateSuspect(InterrogationRequest) returns (SuspectResponse) {}
+  rpc ListSuspects(ListSuspectsRequest) returns (SuspectList);
+  rpc GetInterrogationQuestions(GetInterrogationQuestionsRequest) returns (InterrogationQuestionList);
 }
 
-message WitnessRequest {
-  string location_id = 1;
+message Suspect {
+  string id = 1;
+  string case_id = 2;
+  string name = 3;
+  string description = 4;
 }
 
-message WitnessStatement {
-  string statement = 1;
+message ListSuspectsRequest {
+  string case_id = 1;
 }
 
-message InterrogationRequest {
+message SuspectList {
+  repeated Suspect suspects = 1;
+}
+
+message InterrogationQuestion {
+  string id = 1;
+  string suspect_id = 2;
+  string question = 3;
+  string answer = 4;
+}
+
+message GetInterrogationQuestionsRequest {
   string suspect_id = 1;
-  string question_id = 2;
 }
 
-message SuspectResponse {
-  string response = 1;
+message InterrogationQuestionList {
+  repeated InterrogationQuestion questions = 1;
 }

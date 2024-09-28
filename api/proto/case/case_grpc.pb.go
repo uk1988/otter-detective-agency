@@ -19,16 +19,22 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CaseService_GetCase_FullMethodName       = "/casepb.CaseService/GetCase"
-	CaseService_ListLocations_FullMethodName = "/casepb.CaseService/ListLocations"
+	CaseService_CreateCase_FullMethodName         = "/casepb.CaseService/CreateCase"
+	CaseService_GetCase_FullMethodName            = "/casepb.CaseService/GetCase"
+	CaseService_ListCases_FullMethodName          = "/casepb.CaseService/ListCases"
+	CaseService_AssignCaseToPlayer_FullMethodName = "/casepb.CaseService/AssignCaseToPlayer"
+	CaseService_GetPlayerCase_FullMethodName      = "/casepb.CaseService/GetPlayerCase"
 )
 
 // CaseServiceClient is the client API for CaseService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CaseServiceClient interface {
+	CreateCase(ctx context.Context, in *CreateCaseRequest, opts ...grpc.CallOption) (*Case, error)
 	GetCase(ctx context.Context, in *GetCaseRequest, opts ...grpc.CallOption) (*Case, error)
-	ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error)
+	ListCases(ctx context.Context, in *ListCasesRequest, opts ...grpc.CallOption) (*CaseList, error)
+	AssignCaseToPlayer(ctx context.Context, in *AssignCaseRequest, opts ...grpc.CallOption) (*PlayerCase, error)
+	GetPlayerCase(ctx context.Context, in *GetPlayerCaseRequest, opts ...grpc.CallOption) (*GetPlayerCaseResponse, error)
 }
 
 type caseServiceClient struct {
@@ -37,6 +43,16 @@ type caseServiceClient struct {
 
 func NewCaseServiceClient(cc grpc.ClientConnInterface) CaseServiceClient {
 	return &caseServiceClient{cc}
+}
+
+func (c *caseServiceClient) CreateCase(ctx context.Context, in *CreateCaseRequest, opts ...grpc.CallOption) (*Case, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Case)
+	err := c.cc.Invoke(ctx, CaseService_CreateCase_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *caseServiceClient) GetCase(ctx context.Context, in *GetCaseRequest, opts ...grpc.CallOption) (*Case, error) {
@@ -49,10 +65,30 @@ func (c *caseServiceClient) GetCase(ctx context.Context, in *GetCaseRequest, opt
 	return out, nil
 }
 
-func (c *caseServiceClient) ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error) {
+func (c *caseServiceClient) ListCases(ctx context.Context, in *ListCasesRequest, opts ...grpc.CallOption) (*CaseList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(LocationList)
-	err := c.cc.Invoke(ctx, CaseService_ListLocations_FullMethodName, in, out, cOpts...)
+	out := new(CaseList)
+	err := c.cc.Invoke(ctx, CaseService_ListCases_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *caseServiceClient) AssignCaseToPlayer(ctx context.Context, in *AssignCaseRequest, opts ...grpc.CallOption) (*PlayerCase, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PlayerCase)
+	err := c.cc.Invoke(ctx, CaseService_AssignCaseToPlayer_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *caseServiceClient) GetPlayerCase(ctx context.Context, in *GetPlayerCaseRequest, opts ...grpc.CallOption) (*GetPlayerCaseResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetPlayerCaseResponse)
+	err := c.cc.Invoke(ctx, CaseService_GetPlayerCase_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +99,11 @@ func (c *caseServiceClient) ListLocations(ctx context.Context, in *ListLocations
 // All implementations must embed UnimplementedCaseServiceServer
 // for forward compatibility.
 type CaseServiceServer interface {
+	CreateCase(context.Context, *CreateCaseRequest) (*Case, error)
 	GetCase(context.Context, *GetCaseRequest) (*Case, error)
-	ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error)
+	ListCases(context.Context, *ListCasesRequest) (*CaseList, error)
+	AssignCaseToPlayer(context.Context, *AssignCaseRequest) (*PlayerCase, error)
+	GetPlayerCase(context.Context, *GetPlayerCaseRequest) (*GetPlayerCaseResponse, error)
 	mustEmbedUnimplementedCaseServiceServer()
 }
 
@@ -75,11 +114,20 @@ type CaseServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCaseServiceServer struct{}
 
+func (UnimplementedCaseServiceServer) CreateCase(context.Context, *CreateCaseRequest) (*Case, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCase not implemented")
+}
 func (UnimplementedCaseServiceServer) GetCase(context.Context, *GetCaseRequest) (*Case, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCase not implemented")
 }
-func (UnimplementedCaseServiceServer) ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListLocations not implemented")
+func (UnimplementedCaseServiceServer) ListCases(context.Context, *ListCasesRequest) (*CaseList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCases not implemented")
+}
+func (UnimplementedCaseServiceServer) AssignCaseToPlayer(context.Context, *AssignCaseRequest) (*PlayerCase, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignCaseToPlayer not implemented")
+}
+func (UnimplementedCaseServiceServer) GetPlayerCase(context.Context, *GetPlayerCaseRequest) (*GetPlayerCaseResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPlayerCase not implemented")
 }
 func (UnimplementedCaseServiceServer) mustEmbedUnimplementedCaseServiceServer() {}
 func (UnimplementedCaseServiceServer) testEmbeddedByValue()                     {}
@@ -102,6 +150,24 @@ func RegisterCaseServiceServer(s grpc.ServiceRegistrar, srv CaseServiceServer) {
 	s.RegisterService(&CaseService_ServiceDesc, srv)
 }
 
+func _CaseService_CreateCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaseServiceServer).CreateCase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CaseService_CreateCase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaseServiceServer).CreateCase(ctx, req.(*CreateCaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CaseService_GetCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCaseRequest)
 	if err := dec(in); err != nil {
@@ -120,20 +186,56 @@ func _CaseService_GetCase_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CaseService_ListLocations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListLocationsRequest)
+func _CaseService_ListCases_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCasesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CaseServiceServer).ListLocations(ctx, in)
+		return srv.(CaseServiceServer).ListCases(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CaseService_ListLocations_FullMethodName,
+		FullMethod: CaseService_ListCases_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CaseServiceServer).ListLocations(ctx, req.(*ListLocationsRequest))
+		return srv.(CaseServiceServer).ListCases(ctx, req.(*ListCasesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CaseService_AssignCaseToPlayer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignCaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaseServiceServer).AssignCaseToPlayer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CaseService_AssignCaseToPlayer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaseServiceServer).AssignCaseToPlayer(ctx, req.(*AssignCaseRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CaseService_GetPlayerCase_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPlayerCaseRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CaseServiceServer).GetPlayerCase(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CaseService_GetPlayerCase_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CaseServiceServer).GetPlayerCase(ctx, req.(*GetPlayerCaseRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -146,12 +248,24 @@ var CaseService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CaseServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "CreateCase",
+			Handler:    _CaseService_CreateCase_Handler,
+		},
+		{
 			MethodName: "GetCase",
 			Handler:    _CaseService_GetCase_Handler,
 		},
 		{
-			MethodName: "ListLocations",
-			Handler:    _CaseService_ListLocations_Handler,
+			MethodName: "ListCases",
+			Handler:    _CaseService_ListCases_Handler,
+		},
+		{
+			MethodName: "AssignCaseToPlayer",
+			Handler:    _CaseService_AssignCaseToPlayer_Handler,
+		},
+		{
+			MethodName: "GetPlayerCase",
+			Handler:    _CaseService_GetPlayerCase_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

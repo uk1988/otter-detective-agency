@@ -5,25 +5,33 @@ package evidencepb;
 option go_package = "oda/api/proto/evidence;evidencepb";
 
 service EvidenceService {
-  rpc ListEvidence(ListEvidenceRequest) returns (EvidenceList) {}
-  rpc CollectEvidence(CollectEvidenceRequest) returns (Evidence) {}
+  rpc ListEvidence(ListEvidenceRequest) returns (EvidenceList);
+  rpc ListLocations(ListLocationsRequest) returns (LocationList);
 }
 
 message Evidence {
   string id = 1;
-  string name = 2;
+  string case_id = 2;
   string description = 3;
+  string location = 4;
 }
 
 message ListEvidenceRequest {
-  string location_id = 1;
+  string case_id = 1;
 }
 
 message EvidenceList {
   repeated Evidence evidence = 1;
 }
 
-message CollectEvidenceRequest {
-  string evidence_id = 1;
-  string player_id = 2;
+message Location {
+  string name = 1;
+}
+
+message ListLocationsRequest {
+  string case_id = 1;
+}
+
+message LocationList {
+  repeated Location locations = 1;
 }

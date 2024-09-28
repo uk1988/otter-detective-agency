@@ -5,8 +5,11 @@ package casepb;
 option go_package = "oda/api/proto/case;casepb";
 
 service CaseService {
-  rpc GetCase(GetCaseRequest) returns (Case) {}
-  rpc ListLocations(ListLocationsRequest) returns (LocationList) {}
+  rpc CreateCase(CreateCaseRequest) returns (Case);
+  rpc GetCase(GetCaseRequest) returns (Case);
+  rpc ListCases(ListCasesRequest) returns (CaseList);
+  rpc AssignCaseToPlayer(AssignCaseRequest) returns (PlayerCase);
+  rpc GetPlayerCase(GetPlayerCaseRequest) returns (GetPlayerCaseResponse);
 }
 
 message Case {
@@ -15,17 +18,38 @@ message Case {
   string description = 3;
 }
 
-message GetCaseRequest {}
+message CreateCaseRequest {
+  string title = 1;
+  string description = 2;
+}
 
-message Location {
+message GetCaseRequest {
   string id = 1;
-  string name = 2;
 }
 
-message ListLocationsRequest {
-  string case_id = 1;
+message ListCasesRequest {}
+
+message CaseList {
+  repeated Case cases = 1;
 }
 
-message LocationList {
-  repeated Location locations = 1;
+message PlayerCase {
+  string player_id = 1;
+  string case_id = 2;
+  string status = 3;
+}
+
+message AssignCaseRequest {
+  string player_id = 1;
+  string case_id = 2;
+}
+
+message GetPlayerCaseRequest {
+  string player_id = 1;
+}
+
+
+message GetPlayerCaseResponse {
+  PlayerCase player_case = 1;
+  Case case = 2;
 }

@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DeductionServiceClient interface {
-	SolveCase(ctx context.Context, in *SolveCaseRequest, opts ...grpc.CallOption) (*CaseSolution, error)
+	SolveCase(ctx context.Context, in *SolveCaseRequest, opts ...grpc.CallOption) (*SolutionResult, error)
 }
 
 type deductionServiceClient struct {
@@ -37,9 +37,9 @@ func NewDeductionServiceClient(cc grpc.ClientConnInterface) DeductionServiceClie
 	return &deductionServiceClient{cc}
 }
 
-func (c *deductionServiceClient) SolveCase(ctx context.Context, in *SolveCaseRequest, opts ...grpc.CallOption) (*CaseSolution, error) {
+func (c *deductionServiceClient) SolveCase(ctx context.Context, in *SolveCaseRequest, opts ...grpc.CallOption) (*SolutionResult, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CaseSolution)
+	out := new(SolutionResult)
 	err := c.cc.Invoke(ctx, DeductionService_SolveCase_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (c *deductionServiceClient) SolveCase(ctx context.Context, in *SolveCaseReq
 // All implementations must embed UnimplementedDeductionServiceServer
 // for forward compatibility.
 type DeductionServiceServer interface {
-	SolveCase(context.Context, *SolveCaseRequest) (*CaseSolution, error)
+	SolveCase(context.Context, *SolveCaseRequest) (*SolutionResult, error)
 	mustEmbedUnimplementedDeductionServiceServer()
 }
 
@@ -62,7 +62,7 @@ type DeductionServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDeductionServiceServer struct{}
 
-func (UnimplementedDeductionServiceServer) SolveCase(context.Context, *SolveCaseRequest) (*CaseSolution, error) {
+func (UnimplementedDeductionServiceServer) SolveCase(context.Context, *SolveCaseRequest) (*SolutionResult, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SolveCase not implemented")
 }
 func (UnimplementedDeductionServiceServer) mustEmbedUnimplementedDeductionServiceServer() {}

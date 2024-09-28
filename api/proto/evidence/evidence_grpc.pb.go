@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	EvidenceService_ListEvidence_FullMethodName    = "/evidencepb.EvidenceService/ListEvidence"
-	EvidenceService_CollectEvidence_FullMethodName = "/evidencepb.EvidenceService/CollectEvidence"
+	EvidenceService_ListEvidence_FullMethodName  = "/evidencepb.EvidenceService/ListEvidence"
+	EvidenceService_ListLocations_FullMethodName = "/evidencepb.EvidenceService/ListLocations"
 )
 
 // EvidenceServiceClient is the client API for EvidenceService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EvidenceServiceClient interface {
 	ListEvidence(ctx context.Context, in *ListEvidenceRequest, opts ...grpc.CallOption) (*EvidenceList, error)
-	CollectEvidence(ctx context.Context, in *CollectEvidenceRequest, opts ...grpc.CallOption) (*Evidence, error)
+	ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error)
 }
 
 type evidenceServiceClient struct {
@@ -49,10 +49,10 @@ func (c *evidenceServiceClient) ListEvidence(ctx context.Context, in *ListEviden
 	return out, nil
 }
 
-func (c *evidenceServiceClient) CollectEvidence(ctx context.Context, in *CollectEvidenceRequest, opts ...grpc.CallOption) (*Evidence, error) {
+func (c *evidenceServiceClient) ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Evidence)
-	err := c.cc.Invoke(ctx, EvidenceService_CollectEvidence_FullMethodName, in, out, cOpts...)
+	out := new(LocationList)
+	err := c.cc.Invoke(ctx, EvidenceService_ListLocations_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func (c *evidenceServiceClient) CollectEvidence(ctx context.Context, in *Collect
 // for forward compatibility.
 type EvidenceServiceServer interface {
 	ListEvidence(context.Context, *ListEvidenceRequest) (*EvidenceList, error)
-	CollectEvidence(context.Context, *CollectEvidenceRequest) (*Evidence, error)
+	ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error)
 	mustEmbedUnimplementedEvidenceServiceServer()
 }
 
@@ -78,8 +78,8 @@ type UnimplementedEvidenceServiceServer struct{}
 func (UnimplementedEvidenceServiceServer) ListEvidence(context.Context, *ListEvidenceRequest) (*EvidenceList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEvidence not implemented")
 }
-func (UnimplementedEvidenceServiceServer) CollectEvidence(context.Context, *CollectEvidenceRequest) (*Evidence, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CollectEvidence not implemented")
+func (UnimplementedEvidenceServiceServer) ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLocations not implemented")
 }
 func (UnimplementedEvidenceServiceServer) mustEmbedUnimplementedEvidenceServiceServer() {}
 func (UnimplementedEvidenceServiceServer) testEmbeddedByValue()                         {}
@@ -120,20 +120,20 @@ func _EvidenceService_ListEvidence_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _EvidenceService_CollectEvidence_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CollectEvidenceRequest)
+func _EvidenceService_ListLocations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLocationsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(EvidenceServiceServer).CollectEvidence(ctx, in)
+		return srv.(EvidenceServiceServer).ListLocations(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: EvidenceService_CollectEvidence_FullMethodName,
+		FullMethod: EvidenceService_ListLocations_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(EvidenceServiceServer).CollectEvidence(ctx, req.(*CollectEvidenceRequest))
+		return srv.(EvidenceServiceServer).ListLocations(ctx, req.(*ListLocationsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -150,8 +150,8 @@ var EvidenceService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _EvidenceService_ListEvidence_Handler,
 		},
 		{
-			MethodName: "CollectEvidence",
-			Handler:    _EvidenceService_CollectEvidence_Handler,
+			MethodName: "ListLocations",
+			Handler:    _EvidenceService_ListLocations_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

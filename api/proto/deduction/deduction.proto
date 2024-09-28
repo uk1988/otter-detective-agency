@@ -5,16 +5,16 @@ package deductionpb;
 option go_package = "oda/api/proto/deduction;deductionpb";
 
 service DeductionService {
-  rpc SolveCase(SolveCaseRequest) returns (CaseSolution) {}
+  rpc SolveCase(SolveCaseRequest) returns (SolutionResult);
 }
 
 message SolveCaseRequest {
-  string case_id = 1;
-  string player_id = 2;
-  string solution_id = 3;
+  string player_id = 1;
+  string case_id = 2;
+  string proposed_solution = 3;
 }
 
-message CaseSolution {
+message SolutionResult {
   bool is_correct = 1;
-  string explanation = 2;
+  string feedback = 2;
 }

@@ -19,16 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	InterrogationService_GetWitnessStatement_FullMethodName = "/interrogationpb.InterrogationService/GetWitnessStatement"
-	InterrogationService_InterrogateSuspect_FullMethodName  = "/interrogationpb.InterrogationService/InterrogateSuspect"
+	InterrogationService_ListSuspects_FullMethodName              = "/interrogationpb.InterrogationService/ListSuspects"
+	InterrogationService_GetInterrogationQuestions_FullMethodName = "/interrogationpb.InterrogationService/GetInterrogationQuestions"
 )
 
 // InterrogationServiceClient is the client API for InterrogationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InterrogationServiceClient interface {
-	GetWitnessStatement(ctx context.Context, in *WitnessRequest, opts ...grpc.CallOption) (*WitnessStatement, error)
-	InterrogateSuspect(ctx context.Context, in *InterrogationRequest, opts ...grpc.CallOption) (*SuspectResponse, error)
+	ListSuspects(ctx context.Context, in *ListSuspectsRequest, opts ...grpc.CallOption) (*SuspectList, error)
+	GetInterrogationQuestions(ctx context.Context, in *GetInterrogationQuestionsRequest, opts ...grpc.CallOption) (*InterrogationQuestionList, error)
 }
 
 type interrogationServiceClient struct {
@@ -39,20 +39,20 @@ func NewInterrogationServiceClient(cc grpc.ClientConnInterface) InterrogationSer
 	return &interrogationServiceClient{cc}
 }
 
-func (c *interrogationServiceClient) GetWitnessStatement(ctx context.Context, in *WitnessRequest, opts ...grpc.CallOption) (*WitnessStatement, error) {
+func (c *interrogationServiceClient) ListSuspects(ctx context.Context, in *ListSuspectsRequest, opts ...grpc.CallOption) (*SuspectList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(WitnessStatement)
-	err := c.cc.Invoke(ctx, InterrogationService_GetWitnessStatement_FullMethodName, in, out, cOpts...)
+	out := new(SuspectList)
+	err := c.cc.Invoke(ctx, InterrogationService_ListSuspects_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *interrogationServiceClient) InterrogateSuspect(ctx context.Context, in *InterrogationRequest, opts ...grpc.CallOption) (*SuspectResponse, error) {
+func (c *interrogationServiceClient) GetInterrogationQuestions(ctx context.Context, in *GetInterrogationQuestionsRequest, opts ...grpc.CallOption) (*InterrogationQuestionList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SuspectResponse)
-	err := c.cc.Invoke(ctx, InterrogationService_InterrogateSuspect_FullMethodName, in, out, cOpts...)
+	out := new(InterrogationQuestionList)
+	err := c.cc.Invoke(ctx, InterrogationService_GetInterrogationQuestions_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -63,8 +63,8 @@ func (c *interrogationServiceClient) InterrogateSuspect(ctx context.Context, in 
 // All implementations must embed UnimplementedInterrogationServiceServer
 // for forward compatibility.
 type InterrogationServiceServer interface {
-	GetWitnessStatement(context.Context, *WitnessRequest) (*WitnessStatement, error)
-	InterrogateSuspect(context.Context, *InterrogationRequest) (*SuspectResponse, error)
+	ListSuspects(context.Context, *ListSuspectsRequest) (*SuspectList, error)
+	GetInterrogationQuestions(context.Context, *GetInterrogationQuestionsRequest) (*InterrogationQuestionList, error)
 	mustEmbedUnimplementedInterrogationServiceServer()
 }
 
@@ -75,11 +75,11 @@ type InterrogationServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedInterrogationServiceServer struct{}
 
-func (UnimplementedInterrogationServiceServer) GetWitnessStatement(context.Context, *WitnessRequest) (*WitnessStatement, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetWitnessStatement not implemented")
+func (UnimplementedInterrogationServiceServer) ListSuspects(context.Context, *ListSuspectsRequest) (*SuspectList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSuspects not implemented")
 }
-func (UnimplementedInterrogationServiceServer) InterrogateSuspect(context.Context, *InterrogationRequest) (*SuspectResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method InterrogateSuspect not implemented")
+func (UnimplementedInterrogationServiceServer) GetInterrogationQuestions(context.Context, *GetInterrogationQuestionsRequest) (*InterrogationQuestionList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetInterrogationQuestions not implemented")
 }
 func (UnimplementedInterrogationServiceServer) mustEmbedUnimplementedInterrogationServiceServer() {}
 func (UnimplementedInterrogationServiceServer) testEmbeddedByValue()                              {}
@@ -102,38 +102,38 @@ func RegisterInterrogationServiceServer(s grpc.ServiceRegistrar, srv Interrogati
 	s.RegisterService(&InterrogationService_ServiceDesc, srv)
 }
 
-func _InterrogationService_GetWitnessStatement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(WitnessRequest)
+func _InterrogationService_ListSuspects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSuspectsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InterrogationServiceServer).GetWitnessStatement(ctx, in)
+		return srv.(InterrogationServiceServer).ListSuspects(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InterrogationService_GetWitnessStatement_FullMethodName,
+		FullMethod: InterrogationService_ListSuspects_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterrogationServiceServer).GetWitnessStatement(ctx, req.(*WitnessRequest))
+		return srv.(InterrogationServiceServer).ListSuspects(ctx, req.(*ListSuspectsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _InterrogationService_InterrogateSuspect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InterrogationRequest)
+func _InterrogationService_GetInterrogationQuestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetInterrogationQuestionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InterrogationServiceServer).InterrogateSuspect(ctx, in)
+		return srv.(InterrogationServiceServer).GetInterrogationQuestions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InterrogationService_InterrogateSuspect_FullMethodName,
+		FullMethod: InterrogationService_GetInterrogationQuestions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InterrogationServiceServer).InterrogateSuspect(ctx, req.(*InterrogationRequest))
+		return srv.(InterrogationServiceServer).GetInterrogationQuestions(ctx, req.(*GetInterrogationQuestionsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -146,12 +146,12 @@ var InterrogationService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InterrogationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetWitnessStatement",
-			Handler:    _InterrogationService_GetWitnessStatement_Handler,
+			MethodName: "ListSuspects",
+			Handler:    _InterrogationService_ListSuspects_Handler,
 		},
 		{
-			MethodName: "InterrogateSuspect",
-			Handler:    _InterrogationService_InterrogateSuspect_Handler,
+			MethodName: "GetInterrogationQuestions",
+			Handler:    _InterrogationService_GetInterrogationQuestions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
