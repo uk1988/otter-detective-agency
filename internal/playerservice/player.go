@@ -2,62 +2,59 @@ package playerservice
 
 import (
 	"context"
+	"fmt"
 	playerpb "oda/api/proto/player"
-	"sync"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
 type Server struct {
 	playerpb.UnimplementedPlayerServiceServer
-	mu      sync.Mutex
-	players map[string]*playerpb.Player
+	pool *pgxpool.Pool
 }
 
-func NewServer() *Server {
-	return &Server{
-		players: make(map[string]*playerpb.Player),
+func NewServer(connString string) (*Server, error) {
+	pool, err := pgxpool.Connect(context.Background(), connString)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to connect to database: %v", err)
 	}
+	return &Server{pool: pool}, nil
 }
 
-func (s *Server) CreatePlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
+func (s *Server) CreateNewPlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
 	id := uuid.New().String()
-	player := &playerpb.Player{
-		Id:          id,
-		Name:        req.Name,
-		CasesSolved: 0,
+	query := `INSERT INTO players VALUES ($1, $2, $3) RETURNING id, name, cases_solved`
+	row := s.pool.QueryRow(ctx, query, id, req.Name, 0)
+
+	var player playerpb.Player
+	err := row.Scan(&player.Id, &player.Name, &player.CasesSolved)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to create new player: %v", err)
 	}
-	s.players[id] = player
-	return player, nil
+	return &player, nil
 }
 
 func (s *Server) GetPlayer(ctx context.Context, req *playerpb.GetPlayerRequest) (*playerpb.Player, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	query := `SELECT id, name, cases_solved FROM players WHERE id = $1`
+	row := s.pool.QueryRow(ctx, query, req.Id)
 
-	player, ok := s.players[req.Id]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "player not found")
+	var player playerpb.Player
+	err := row.Scan(&player.Id, &player.Name, &player.CasesSolved)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to get player: %v", err)
 	}
-	return player, nil
+	return &player, nil
 }
 
 func (s *Server) UpdatePlayerProgress(ctx context.Context, req *playerpb.UpdatePlayerProgressRequest) (*playerpb.Player, error) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+	query := `UPDATE players SET cases_solved = cases_solved + 1 WHERE id = $1 RETURNING id, name, cases_solved`
+	row := s.pool.QueryRow(ctx, query, req.Id)
 
-	player, ok := s.players[req.Id]
-	if !ok {
-		return nil, status.Errorf(codes.NotFound, "player not found")
+	var player playerpb.Player
+	err := row.Scan(&player.Id, &player.Name, &player.CasesSolved)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to update player progress: %v", err)
 	}
-
-	if req.CaseSolved {
-		player.CasesSolved++
-	}
-	return player, nil
+	return &player, nil
 }
