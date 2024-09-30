@@ -5,46 +5,87 @@ import (
 	"log"
 	"net/http"
 	"oda/internal/gameservice"
+	"os"
 
-	"github.com/gorilla/mux"
+	casepb "oda/api/proto/case"
+	deductionpb "oda/api/proto/deduction"
+	evidencepb "oda/api/proto/evidence"
+	interrogationpb "oda/api/proto/interrogation"
+	playerpb "oda/api/proto/player"
+
 	"github.com/gorilla/websocket"
+	"google.golang.org/grpc"
 )
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
-		return true
-	}, // Allow all connections by default
+		return true // Allow all connections for this prototype
+	},
 }
 
 func main() {
-	r := mux.NewRouter()
-
-	r.HandleFunc("/startnewgame", handleStartNewGame).Methods("GET")
-	r.HandleFunc("/game/{sessionID}", handleGameWebSocket)
-
-	fmt.Println("Game service starting on port 8080...")
-	log.Fatal(http.ListenAndServe(":8080", r))
-}
-
-func handleStartNewGame(w http.ResponseWriter, r *http.Request) {
-	// Start a new game
-	sessionID := gameservice.CreateNewSession()
-	fmt.Fprintf(w, "Please connect to ws://localhost:8080/game/%s", sessionID)
-}
-
-func handleGameWebSocket(w http.ResponseWriter, r *http.Request) {
-	// Handle game websocket
-	vars := mux.Vars(r)
-	sessionID := vars["sessionID"]
-
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println(err)
-		return
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
 	}
-	defer conn.Close()
 
-	gameservice.HandleGameWebSocket(sessionID, w, r)
+	// Set up gRPC connections to each service
+	playerConn, err := grpc.Dial("player-service:50051", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to PlayerService: %v", err)
+	}
+	defer playerConn.Close()
+	playerClient := playerpb.NewPlayerServiceClient(playerConn)
+
+	caseConn, err := grpc.Dial("case-service:50052", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to CaseService: %v", err)
+	}
+	defer caseConn.Close()
+	caseClient := casepb.NewCaseServiceClient(caseConn)
+
+	evidenceConn, err := grpc.Dial("evidence-service:50053", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to EvidenceService: %v", err)
+	}
+	defer evidenceConn.Close()
+	evidenceClient := evidencepb.NewEvidenceServiceClient(evidenceConn)
+
+	interrogationConn, err := grpc.Dial("interrogation-service:50054", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to InterrogationService: %v", err)
+	}
+	defer interrogationConn.Close()
+	interrogationClient := interrogationpb.NewInterrogationServiceClient(interrogationConn)
+
+	deductionConn, err := grpc.Dial("deduction-service:50055", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to DeductionService: %v", err)
+	}
+	defer deductionConn.Close()
+	deductionClient := deductionpb.NewDeductionServiceClient(deductionConn)
+
+	gameService := gameservice.NewGameService(
+		playerClient,
+		caseClient,
+		evidenceClient,
+		interrogationClient,
+		deductionClient,
+	)
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		gameService.HandleConnection(conn)
+	})
+
+	log.Printf("Game service listening on port %s", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	EvidenceService_ListEvidence_FullMethodName  = "/evidencepb.EvidenceService/ListEvidence"
+	EvidenceService_GetEvidence_FullMethodName   = "/evidencepb.EvidenceService/GetEvidence"
 	EvidenceService_ListLocations_FullMethodName = "/evidencepb.EvidenceService/ListLocations"
 )
 
@@ -28,6 +29,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type EvidenceServiceClient interface {
 	ListEvidence(ctx context.Context, in *ListEvidenceRequest, opts ...grpc.CallOption) (*EvidenceList, error)
+	GetEvidence(ctx context.Context, in *GetEvidenceRequest, opts ...grpc.CallOption) (*Evidence, error)
 	ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error)
 }
 
@@ -49,6 +51,16 @@ func (c *evidenceServiceClient) ListEvidence(ctx context.Context, in *ListEviden
 	return out, nil
 }
 
+func (c *evidenceServiceClient) GetEvidence(ctx context.Context, in *GetEvidenceRequest, opts ...grpc.CallOption) (*Evidence, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(Evidence)
+	err := c.cc.Invoke(ctx, EvidenceService_GetEvidence_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *evidenceServiceClient) ListLocations(ctx context.Context, in *ListLocationsRequest, opts ...grpc.CallOption) (*LocationList, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(LocationList)
@@ -64,6 +76,7 @@ func (c *evidenceServiceClient) ListLocations(ctx context.Context, in *ListLocat
 // for forward compatibility.
 type EvidenceServiceServer interface {
 	ListEvidence(context.Context, *ListEvidenceRequest) (*EvidenceList, error)
+	GetEvidence(context.Context, *GetEvidenceRequest) (*Evidence, error)
 	ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error)
 	mustEmbedUnimplementedEvidenceServiceServer()
 }
@@ -77,6 +90,9 @@ type UnimplementedEvidenceServiceServer struct{}
 
 func (UnimplementedEvidenceServiceServer) ListEvidence(context.Context, *ListEvidenceRequest) (*EvidenceList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListEvidence not implemented")
+}
+func (UnimplementedEvidenceServiceServer) GetEvidence(context.Context, *GetEvidenceRequest) (*Evidence, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEvidence not implemented")
 }
 func (UnimplementedEvidenceServiceServer) ListLocations(context.Context, *ListLocationsRequest) (*LocationList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListLocations not implemented")
@@ -120,6 +136,24 @@ func _EvidenceService_ListEvidence_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EvidenceService_GetEvidence_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEvidenceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EvidenceServiceServer).GetEvidence(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EvidenceService_GetEvidence_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EvidenceServiceServer).GetEvidence(ctx, req.(*GetEvidenceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _EvidenceService_ListLocations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListLocationsRequest)
 	if err := dec(in); err != nil {
@@ -148,6 +182,10 @@ var EvidenceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListEvidence",
 			Handler:    _EvidenceService_ListEvidence_Handler,
+		},
+		{
+			MethodName: "GetEvidence",
+			Handler:    _EvidenceService_GetEvidence_Handler,
 		},
 		{
 			MethodName: "ListLocations",

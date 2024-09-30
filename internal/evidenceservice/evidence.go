@@ -22,8 +22,8 @@ func NewServer(connString string) (*Server, error) {
 }
 
 func (s *Server) ListEvidence(ctx context.Context, req *evidencepb.ListEvidenceRequest) (*evidencepb.EvidenceList, error) {
-	query := `SELECT id, case_id, description, location FROM evidence WHERE case_id = $1`
-	rows, err := s.pool.Query(ctx, query, req.CaseId)
+	query := `SELECT id, case_id, name, description, location FROM evidence WHERE case_id = $1 AND location = $2`
+	rows, err := s.pool.Query(ctx, query, req.CaseId, req.Location)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to list evidence: %v", err)
 	}
@@ -32,13 +32,25 @@ func (s *Server) ListEvidence(ctx context.Context, req *evidencepb.ListEvidenceR
 	var evidenceList []*evidencepb.Evidence
 	for rows.Next() {
 		var e evidencepb.Evidence
-		err := rows.Scan(&e.Id, &e.CaseId, &e.Description, &e.Location)
+		err := rows.Scan(&e.Id, &e.CaseId, &e.Name, &e.Description, &e.Location)
 		if err != nil {
 			return nil, fmt.Errorf("Unable to scan row: %v", err)
 		}
 		evidenceList = append(evidenceList, &e)
 	}
 	return &evidencepb.EvidenceList{Evidence: evidenceList}, nil
+}
+
+func (s *Server) GetEvidence(ctx context.Context, req *evidencepb.GetEvidenceRequest) (*evidencepb.Evidence, error) {
+	query := `SELECT id, case_id, name, description, location FROM evidence WHERE id = $1`
+	row := s.pool.QueryRow(ctx, query, req.Id)
+
+	var e evidencepb.Evidence
+	err := row.Scan(&e.Id, &e.CaseId, &e.Name, &e.Description, &e.Location)
+	if err != nil {
+		return nil, fmt.Errorf("unable to get evidence: %v", err)
+	}
+	return &e, nil
 }
 
 func (s *Server) ListLocations(ctx context.Context, req *evidencepb.ListLocationsRequest) (*evidencepb.LocationList, error) {
