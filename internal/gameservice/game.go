@@ -9,6 +9,7 @@ import (
 	evidencepb "oda/api/proto/evidence"
 	interrogationpb "oda/api/proto/interrogation"
 	playerpb "oda/api/proto/player"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -255,9 +256,31 @@ func (gs *GameService) listSuspects(session *GameSession) {
 }
 
 func (gs *GameService) interrogateSuspect(session *GameSession, suspectName string) {
-	session.CurrentSuspect = suspectName
+	suspects, err := gs.interrogationClient.ListSuspects(context.Background(), &interrogationpb.ListSuspectsRequest{
+		CaseId: session.Case.Id,
+	})
+	if err != nil {
+		log.Printf("Error listing suspects: %v", err)
+		gs.sendErrorMessage(session.Conn, "Error preparing interrogation. Please try again.")
+		return
+	}
+
+	var suspectId string
+	for _, s := range suspects.Suspects {
+		if s.Name == suspectName {
+			suspectId = s.Id
+			break
+		}
+	}
+
+	if suspectId == "" {
+		gs.sendErrorMessage(session.Conn, "Suspect not found. Please try again.")
+		return
+	}
+
+	session.CurrentSuspect = suspectId // Store the suspect ID instead of name
 	questions, err := gs.interrogationClient.GetInterrogationQuestions(context.Background(), &interrogationpb.GetInterrogationQuestionsRequest{
-		SuspectId: suspectName, // This should be the suspect's ID, not name. You might need to adjust this.
+		SuspectId: suspectId,
 	})
 	if err != nil {
 		log.Printf("Error getting interrogation questions: %v", err)
@@ -274,7 +297,23 @@ func (gs *GameService) interrogateSuspect(session *GameSession, suspectName stri
 }
 
 func (gs *GameService) askQuestion(session *GameSession, questionNumber string) {
-	gs.sendMessage(session.Conn, fmt.Sprintf("💬 The suspect answers: [Placeholder answer for question %s]", questionNumber))
+	questions, err := gs.interrogationClient.GetInterrogationQuestions(context.Background(), &interrogationpb.GetInterrogationQuestionsRequest{
+		SuspectId: session.CurrentSuspect,
+	})
+	if err != nil {
+		log.Printf("Error getting interrogation questions: %v", err)
+		gs.sendErrorMessage(session.Conn, "Error retrieving question. Please try again.")
+		return
+	}
+
+	qNum, err := strconv.Atoi(questionNumber)
+	if err != nil || qNum < 1 || qNum > len(questions.Questions) {
+		gs.sendErrorMessage(session.Conn, "Invalid question number. Please try again.")
+		return
+	}
+
+	question := questions.Questions[qNum-1]
+	gs.sendMessage(session.Conn, fmt.Sprintf("💬 Question: %s\nAnswer: %s", question.Question, question.Answer))
 	gs.sendGameOptions(session)
 }
 
