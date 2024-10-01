@@ -13,6 +13,7 @@ import (
 	interrogationpb "oda/api/proto/interrogation"
 	playerpb "oda/api/proto/player"
 
+	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"google.golang.org/grpc"
 )
@@ -75,17 +76,31 @@ func main() {
 		deductionClient,
 	)
 
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, nil)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		gameService.HandleConnection(conn)
+	r := mux.NewRouter()
+
+	r.HandleFunc("/startnewgame", func(w http.ResponseWriter, r *http.Request) {
+		handleStartNewGame(w, r, gameService)
+	}).Methods("GET")
+	r.HandleFunc("/game/{SessionID}", func(w http.ResponseWriter, r *http.Request) {
+		handleGameWebSocket(w, r, gameService)
 	})
 
-	log.Printf("Game service listening on port %s", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	log.Printf("Game Service listening on pong :%s\n", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), r); err != nil {
+		log.Fatalf("Failed to listen and serve: %v", err)
 	}
+}
+
+func handleStartNewGame(w http.ResponseWriter, r *http.Request, gs *gameservice.GameService) {
+	sessionID := gs.CreateNewSession()
+	fmt.Fprintf(w, "Please connect to ws://localhost:8080/game/%s", sessionID)
+}
+
+func handleGameWebSocket(w http.ResponseWriter, r *http.Request, gs *gameservice.GameService) {
+	conn, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	gs.HandleConnection(conn)
 }

@@ -62,6 +62,21 @@ func NewGameService(
 	}
 }
 
+func (gs *GameService) CreateNewSession() string {
+	sessionID := uuid.New().String()
+	session := &GameSession{
+		ID:                 sessionID,
+		WaitingForSolution: false,
+		WaitingForNewCase:  false,
+	}
+
+	gs.mu.Lock()
+	gs.sessions[sessionID] = session
+	gs.mu.Unlock()
+
+	return sessionID
+}
+
 func (gs *GameService) HandleConnection(conn *websocket.Conn) {
 	sessionID := uuid.New().String()
 	session := &GameSession{
