@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	evidencepb "oda/api/proto/evidence"
+	"oda/pkg/dbconnect"
+	"time"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -14,7 +16,7 @@ type Server struct {
 }
 
 func NewServer(connString string) (*Server, error) {
-	pool, err := pgxpool.Connect(context.Background(), connString)
+	pool, err := dbconnect.ConnectWithRetry(connString, 5, time.Second*3)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to connect to database: %v", err)
 	}

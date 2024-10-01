@@ -1,0 +1,73 @@
+# Deploy/docker/docker-compose.yml
+version: "3"
+
+services:
+  playerservice:
+    image: vfiftyfive/oda-playerservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/playerservice"]
+
+  caseservice:
+    image: vfiftyfive/oda-caseservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/caseservice"]
+
+  evidenceservice:
+    image: vfiftyfive/oda-evidenceservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/evidenceservice"]
+
+  interrogationservice:
+    image: vfiftyfive/oda-interrogationservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint:
+      ["/app/wait-for-it.sh", "db:5432", --, "/app/interrogationservice"]
+
+  deductionservice:
+    image: vfiftyfive/oda-deductionservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/deductionservice"]
+
+  gameservice:
+    image: vfiftyfive/oda-gameservice:latest
+    ports:
+      - "8080:8080"
+    environment:
+      - PLAYER_SERVICE_ADDR=playerservice:50051
+      - CASE_SERVICE_ADDR=caseservice:50052
+      - EVIDENCE_SERVICE_ADDR=evidenceservice:50053
+      - INTERROGATION_SERVICE_ADDR=interrogationservice:50054
+      - DEDUCTION_SERVICE_ADDR=deductionservice:50055
+    depends_on:
+      - playerservice
+      - caseservice
+      - evidenceservice
+      - interrogationservice
+      - deductionservice
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=oda
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
