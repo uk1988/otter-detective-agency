@@ -16,7 +16,7 @@ func ConnectWithRetry(connString string, maxRetries int, retryInterval time.Dura
 		if err == nil {
 			return pool, nil
 		}
-		fmt.Printf("Failed to connect to database. Retrying in %s", retryInterval)
+		fmt.Printf("Failed to connect to database. Retrying in %s\n", retryInterval)
 		time.Sleep(retryInterval)
 	}
 	return nil, fmt.Errorf("Failed to connect to database after %d retries", maxRetries)

@@ -25,15 +25,17 @@ func NewServer(connString string) (*Server, error) {
 }
 
 func (s *Server) CreateCase(ctx context.Context, req *casepb.CreateCaseRequest) (*casepb.Case, error) {
-	id := uuid.New().String()
+	id := uuid.New()
 	query := `INSERT INTO cases VALUES ($1, $2, $3) RETURNING id, title, description`
 	row := s.pool.QueryRow(ctx, query, id, req.Title, req.Description)
 
 	var c casepb.Case
-	err := row.Scan(&c.Id, &c.Title, &c.Description)
+	var dbId uuid.UUID
+	err := row.Scan(&dbId, &c.Title, &c.Description)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to create new case: %v", err)
 	}
+	c.Id = dbId.String()
 	return &c, nil
 }
 

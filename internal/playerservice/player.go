@@ -25,15 +25,17 @@ func NewServer(connString string) (*Server, error) {
 }
 
 func (s *Server) CreatePlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
-	id := uuid.New().String()
+	id := uuid.New()
 	query := `INSERT INTO players VALUES ($1, $2, $3) RETURNING id, name, cases_solved`
 	row := s.pool.QueryRow(ctx, query, id, req.Name, 0)
 
 	var player playerpb.Player
-	err := row.Scan(&player.Id, &player.Name, &player.CasesSolved)
+	var dbId uuid.UUID
+	err := row.Scan(&dbId, &player.Name, &player.CasesSolved)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to create new player: %v", err)
 	}
+	player.Id = dbId.String()
 	return &player, nil
 }
 
