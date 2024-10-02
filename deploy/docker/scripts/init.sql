@@ -35,7 +35,8 @@ CREATE TABLE evidence (
     case_id UUID REFERENCES cases(id),
     name TEXT NOT NULL,
     description TEXT NOT NULL,
-    location TEXT NOT NULL
+    location TEXT NOT NULL,
+    analysis_result TEXT
 );
 
 CREATE TABLE suspects (
@@ -62,12 +63,12 @@ BEGIN
     (uuid_generate_v4(), 'The Case of the Stolen Golden Fish', 'The Otter Museum''s prized possession, a solid gold statue of an otter holding a fish, has been stolen overnight. The statue, valued at $1 million, was the centerpiece of the museum''s "Aquatic Treasures" exhibit. The theft occurred despite the museum''s state-of-the-art security system. Your task is to investigate the crime scene, gather evidence, and interrogate suspects to solve this fishy case!', 'Finn Waters')
     RETURNING id INTO case_var;
 
-    INSERT INTO evidence (case_id, name, description, location) VALUES 
-    (case_var, 'muddy footprint', 'A single muddy footprint found just inside the museum entrance. It appears to be from a size 10 boot.', 'museum entrance'),
-    (case_var, 'deactivated alarm system', 'The security system was deactivated at 2:37 AM using the correct access code.', 'security room'),
-    (case_var, 'broken glass case', 'The glass case containing the statue has been carefully cut, suggesting professional tools were used.', 'exhibit hall'),
-    (case_var, 'wet umbrella', 'A damp umbrella found in the corner, despite no rain being reported that night.', 'staff lounge'),
-    (case_var, 'tire tracks', 'Fresh tire tracks leading away from the staff parking area, indicating a hasty departure.', 'parking lot');
+    INSERT INTO evidence (case_id, name, description, location, analysis_result) VALUES 
+    (case_var, 'muddy footprint', 'A single muddy footprint found just inside the museum entrance. It appears to be from a size 10 boot.', 'museum entrance', 'The mud contains traces of a rare mineral found only in a nearby construction site where Finn Waters was seen recently.'),
+    (case_var, 'deactivated alarm system', 'The security system was deactivated at 2:37 AM using the correct access code.', 'security room', 'Log analysis shows multiple failed attempts before success, suggesting someone familiar with the system but not using it regularly.'),
+    (case_var, 'broken glass case', 'The glass case containing the statue has been carefully cut, suggesting professional tools were used.', 'exhibit hall', 'Microscopic analysis reveals the use of a common glass cutter, available at most hardware stores. No specialized knowledge required.'),
+    (case_var, 'wet umbrella', 'A damp umbrella found in the corner, despite no rain being reported that night.', 'staff lounge', 'DNA analysis of the umbrella handle matches Finn Waters, contradicting his statement about not using it recently.'),
+    (case_var, 'tire tracks', 'Fresh tire tracks leading away from the staff parking area, indicating a hasty departure.', 'parking lot', 'Tire tread analysis matches a standard issue museum vehicle, eliminating the possibility of an outside vehicle being used.');
 
     INSERT INTO suspects (id, case_id, name, description) VALUES 
     (uuid_generate_v4(), case_var, 'Dr. Olivia Whiskers', 'The museum''s curator, known for her extensive knowledge of aquatic artifacts.'),
