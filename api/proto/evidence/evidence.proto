@@ -10,17 +10,31 @@ service EvidenceService {
   rpc ListLocations(ListLocationsRequest) returns (LocationList);
 }
 
+service CSIService{
+    rpc AnalyzeEvidence(AnalyzeEvidenceRequest) returns (AnalysisResult);
+  }
+
 message Evidence {
   string id = 1;
   string case_id = 2;
   string name = 3;
   string description = 4;
   string location = 5;
+  string analysis_result = 6;
 }
 
 message ListEvidenceRequest {
   string case_id = 1;
   string location = 2;
+}
+
+message AnalyzeEvidenceRequest {
+  string evidence_id = 1;
+}
+
+message AnalysisResult {
+  string evidence_id = 1;
+  string result = 2;
 }
 
 message EvidenceList {

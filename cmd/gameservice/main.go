@@ -68,12 +68,20 @@ func main() {
 	defer deductionConn.Close()
 	deductionClient := deductionpb.NewDeductionServiceClient(deductionConn)
 
+	csiConn, err := grpc.Dial("csi-service:50057", grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("Failed to connect to CSIService: %v", err)
+	}
+	defer csiConn.Close()
+	csiClient := evidencepb.NewCSIServiceClient(csiConn)
+
 	gameService := gameservice.NewGameService(
 		playerClient,
 		caseClient,
 		evidenceClient,
 		interrogationClient,
 		deductionClient,
+		csiClient,
 	)
 
 	r := mux.NewRouter()

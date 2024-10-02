@@ -30,6 +30,7 @@ type GameService struct {
 	evidenceClient      evidencepb.EvidenceServiceClient
 	interrogationClient interrogationpb.InterrogationServiceClient
 	deductionClient     deductionpb.DeductionServiceClient
+	csiClient           evidencepb.CSIServiceClient
 	sessions            map[string]*GameSession
 	mu                  sync.Mutex
 }
@@ -51,6 +52,7 @@ func NewGameService(
 	evidenceClient evidencepb.EvidenceServiceClient,
 	interrogationClient interrogationpb.InterrogationServiceClient,
 	deductionClient deductionpb.DeductionServiceClient,
+	csiClient evidencepb.CSIServiceClient,
 ) *GameService {
 	return &GameService{
 		playerClient:        playerClient,
@@ -58,6 +60,7 @@ func NewGameService(
 		evidenceClient:      evidenceClient,
 		interrogationClient: interrogationClient,
 		deductionClient:     deductionClient,
+		csiClient:           csiClient,
 		sessions:            make(map[string]*GameSession),
 	}
 }
@@ -292,6 +295,32 @@ func (gs *GameService) investigateEvidence(session *GameSession, evidenceName st
 	}
 
 	gs.sendMessage(session.Conn, fmt.Sprintf("🔍 %s: %s", foundEvidence.Name, foundEvidence.Description), false)
+	gs.sendMessage(session.Conn, "Would you like to send this evidence to the CSI lab for analysis? (yes/no)", false)
+
+	message, err := gs.waitForUserInput(session.Conn)
+	if err != nil {
+		log.Printf("Error waiting for user input: %v", err)
+		return
+	}
+
+	if strings.ToLower(message) == "yes" {
+		gs.analyzeEvidence(session, foundEvidence.Id)
+	} else {
+		gs.sendGameOptions(session)
+	}
+}
+
+func (gs *GameService) analyzeEvidence(session *GameSession, evidenceId string) {
+	gs.sendMessage(session.Conn, "Analyzing evidence... 🔬", true)
+	gs.sendMessage(session.Conn, "Rolling the dice... 🎲", false)
+
+	result, err := gs.csiClient.AnalyzeEvidence(context.Background(), &evidencepb.AnalyzeEvidenceRequest{EvidenceId: evidenceId})
+	if err != nil {
+		log.Printf("Error analyzing evidence: %v", err)
+		gs.sendErrorMessage(session.Conn, "Error analyzing evidence. Please try again.")
+		return
+	}
+	gs.sendMessage(session.Conn, fmt.Sprintf("🔬 Analysis result: %s", result.Result), false)
 }
 
 func (gs *GameService) listSuspects(session *GameSession) {

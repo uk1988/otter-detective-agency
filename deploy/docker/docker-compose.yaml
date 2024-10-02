@@ -43,6 +43,14 @@ services:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/deductionservice"]
 
+  csi-service:
+    image: vfiftyfive/oda-csiservice:latest
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/oda
+    depends_on:
+      - db
+    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/csiservice"]
+
   game-service:
     image: vfiftyfive/oda-gameservice:latest
     ports:
