@@ -97,7 +97,7 @@ func (gs *GameService) HandleConnection(conn *websocket.Conn) {
 		conn.Close()
 	}()
 
-	gs.sendMessage(conn, colorGreen+"🔎 Welcome to the Otter Detective Agency! Please enter your name:")
+	gs.sendMessage(conn, colorGreen+"🔎 Welcome to the Otter Detective Agency! Please enter your name:", true)
 
 	for {
 		_, message, err := conn.ReadMessage()
@@ -135,20 +135,41 @@ func (gs *GameService) createPlayer(session *GameSession, name string) {
 		return
 	}
 	session.Player = player
-	gs.sendSuccessMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! 🕵️ Let's get started", player.Name))
+	gs.sendSuccessMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! Let's get started", player.Name))
 	gs.assignCase(session)
 }
 
 func (gs *GameService) assignCase(session *GameSession) {
 	caseList, err := gs.caseClient.ListCases(context.Background(), &casepb.ListCasesRequest{})
-	if err != nil || len(caseList.Cases) == 0 {
+	if err != nil {
 		log.Printf("Error listing cases: %v", err)
+		gs.sendErrorMessage(session.Conn, "Error listing cases. Please try again later.")
+		return
+	}
+
+	if len(caseList.Cases) == 0 {
 		gs.sendErrorMessage(session.Conn, "No cases available. Please try again later.")
 		return
 	}
 
-	// For simplicity, we're just getting the first case. In a real game, you'd want to select an unsolved case.
+	// For the first iteration, we only have one case
 	session.Case = caseList.Cases[0]
+
+	// Check if the player has already been assigned this case
+	playerCase, err := gs.caseClient.GetPlayerCase(context.Background(), &casepb.GetPlayerCaseRequest{
+		PlayerId: session.Player.Id,
+	})
+	if err == nil && playerCase.PlayerCase != nil {
+		// Player has already been assigned this case
+		if playerCase.PlayerCase.Status == "solved" {
+			gs.sendErrorMessage(session.Conn, "You've already solved this case. Let's find you a new one!")
+			// Logic to asign a new case - skip for now
+			return
+		} else {
+			gs.sendErrorMessage(session.Conn, "You're already working on this case. Let's continue where you left off!")
+		}
+		return
+	}
 
 	_, err = gs.caseClient.AssignCaseToPlayer(context.Background(), &casepb.AssignCaseRequest{
 		PlayerId: session.Player.Id,
@@ -160,7 +181,13 @@ func (gs *GameService) assignCase(session *GameSession) {
 		return
 	}
 
-	gs.sendMessage(session.Conn, fmt.Sprintf("📁 You've been assigned the case: %s\n%s", session.Case.Title, session.Case.Description))
+	gs.sendMessage(session.Conn, fmt.Sprintf("📁 You've been assigned the case: %s\n%s", session.Case.Title, session.Case.Description), true)
+	gs.sendMessage(session.Conn, "Press Enter to continue...", false)
+	_, err = gs.waitForUserInput(session.Conn)
+	if err != nil {
+		log.Printf("Error waiting for user input: %v", err)
+		return
+	}
 	gs.sendGameOptions(session)
 }
 
@@ -185,7 +212,6 @@ func (gs *GameService) handleGameCommand(session *GameSession, command string) {
 		question := strings.TrimPrefix(command, "ask ")
 		gs.askQuestion(session, question)
 	default:
-		gs.sendMessage(session.Conn, "Invalid command. Please try again.")
 		gs.sendGameOptions(session)
 	}
 }
@@ -202,11 +228,12 @@ func (gs *GameService) listLocations(session *GameSession) {
 	for _, location := range locations.Locations {
 		locationsList += fmt.Sprintf("- %s\n", location.Name)
 	}
-	gs.sendMessage(session.Conn, locationsList)
-	gs.sendMessage(session.Conn, "Type 'examine <location>' to examine a location.")
+	gs.sendMessage(session.Conn, locationsList, true)
+	gs.sendMessage(session.Conn, "Type 'examine <location>' to examine a location.", false)
 }
 
 func (gs *GameService) examineLocation(session *GameSession, location string) {
+	location = strings.ToLower(location)
 	session.CurrentLocation = location
 	evidenceList, err := gs.evidenceClient.ListEvidence(context.Background(), &evidencepb.ListEvidenceRequest{
 		CaseId:   session.Case.Id,
@@ -222,8 +249,8 @@ func (gs *GameService) examineLocation(session *GameSession, location string) {
 	for _, e := range evidenceList.Evidence {
 		evidenceMsg += fmt.Sprintf("- %s\n", e.Name)
 	}
-	gs.sendMessage(session.Conn, evidenceMsg)
-	gs.sendMessage(session.Conn, "Type 'investigate [evidence name]' to examine a piece of evidence.")
+	gs.sendMessage(session.Conn, evidenceMsg, false)
+	gs.sendMessage(session.Conn, "Type 'investigate [evidence name]' to examine a piece of evidence.", false)
 }
 
 func (gs *GameService) investigateEvidence(session *GameSession, evidenceName string) {
@@ -250,24 +277,23 @@ func (gs *GameService) investigateEvidence(session *GameSession, evidenceName st
 		return
 	}
 
-	gs.sendMessage(session.Conn, fmt.Sprintf("🔍 %s: %s", foundEvidence.Name, foundEvidence.Description))
-	gs.sendGameOptions(session)
+	gs.sendMessage(session.Conn, fmt.Sprintf("🔍 %s: %s", foundEvidence.Name, foundEvidence.Description), false)
 }
 
 func (gs *GameService) listSuspects(session *GameSession) {
 	suspects, err := gs.interrogationClient.ListSuspects(context.Background(), &interrogationpb.ListSuspectsRequest{CaseId: session.Case.Id})
 	if err != nil {
 		log.Printf("Error listing suspects: %v", err)
-		gs.sendMessage(session.Conn, "Error listing suspects. Please try again later.")
+		gs.sendErrorMessage(session.Conn, "Error listing suspects. Please try again later.")
 		return
 	}
 
 	suspectsList := "👥 Suspects:\n"
 	for _, suspect := range suspects.Suspects {
-		suspectsList += fmt.Sprintf("- %s:%s\n", suspect.Name, suspect.Description)
+		suspectsList += fmt.Sprintf("- %s: %s\n", suspect.Name, suspect.Description)
 	}
-	gs.sendMessage(session.Conn, suspectsList)
-	gs.sendMessage(session.Conn, "Type 'interrogate [suspect name]' to interrogate a suspect.")
+	gs.sendMessage(session.Conn, suspectsList, true)
+	gs.sendMessage(session.Conn, "Type 'interrogate [suspect name]' to interrogate a suspect.", false)
 }
 
 func (gs *GameService) interrogateSuspect(session *GameSession, suspectName string) {
@@ -307,8 +333,8 @@ func (gs *GameService) interrogateSuspect(session *GameSession, suspectName stri
 	for i, q := range questions.Questions {
 		questionList += fmt.Sprintf("%d. %s\n", i+1, q.Question)
 	}
-	gs.sendMessage(session.Conn, questionList)
-	gs.sendMessage(session.Conn, "Type 'ask [question number]' to ask a question.")
+	gs.sendMessage(session.Conn, questionList, false)
+	gs.sendMessage(session.Conn, "Type 'ask [question number]' to ask a question.", false)
 }
 
 func (gs *GameService) askQuestion(session *GameSession, questionNumber string) {
@@ -328,12 +354,11 @@ func (gs *GameService) askQuestion(session *GameSession, questionNumber string) 
 	}
 
 	question := questions.Questions[qNum-1]
-	gs.sendMessage(session.Conn, fmt.Sprintf("💬 Question: %s\nAnswer: %s", question.Question, question.Answer))
-	gs.sendGameOptions(session)
+	gs.sendMessage(session.Conn, fmt.Sprintf("💬 Question: %s\nAnswer: %s", question.Question, question.Answer), false)
 }
 
 func (gs *GameService) promptForSolution(session *GameSession) {
-	gs.sendMessage(session.Conn, "Who do you think committed the crime? Enter the name of the suspect:")
+	gs.sendMessage(session.Conn, "Who do you think committed the crime? Enter the name of the suspect:", false)
 	// Set a flag in the session to indicate that we're waiting for a solution
 	session.WaitingForSolution = true
 }
@@ -358,11 +383,10 @@ func (gs *GameService) solveCaseAttempt(session *GameSession, solution string) {
 			return
 		}
 		gs.sendSuccessMessage(session.Conn, "🎉 Congratulations! You've solved the case. 🕵️")
-		gs.sendMessage(session.Conn, "Would you like to solve another case? (yes/no)")
+		gs.sendMessage(session.Conn, "Would you like to solve another case? (yes/no)", false)
 		session.WaitingForNewCase = true
 	} else {
 		gs.sendErrorMessage(session.Conn, "❌ Sorry, that's not the correct solution. Try again! 🔍")
-		gs.sendGameOptions(session)
 	}
 }
 
@@ -373,31 +397,33 @@ func (gs *GameService) handleNewCaseResponse(session *GameSession, response stri
 		session.Case = nil
 		gs.assignCase(session)
 	case "no":
-		gs.sendMessage(session.Conn, "Thank you for playing! 👋")
+		gs.sendMessage(session.Conn, "Thank you for playing! 👋", false)
 		session.Conn.Close()
 	default:
 		gs.sendErrorMessage(session.Conn, "Invalid response. Please answer 'yes' or 'no'.")
 		session.WaitingForNewCase = true
-		gs.sendMessage(session.Conn, "Would you like to solve another case? (yes/no)")
+		gs.sendMessage(session.Conn, "Would you like to solve another case? (yes/no)", false)
 	}
 }
 
-func (gs *GameService) sendMessage(conn *websocket.Conn, message string) {
-	fullMessage := clearScreen + colorGreen + message + colorReset
+func (gs *GameService) sendMessage(conn *websocket.Conn, message string, clearScreenBefore bool) {
+	var fullMessage string
+	if clearScreenBefore {
+		fullMessage = clearScreen + colorGreen + message + colorReset
+	} else {
+		fullMessage = colorGreen + message + colorReset
+	}
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(fullMessage)); err != nil {
 		log.Printf("Error sending message: %v", err)
 	}
 }
 
 func (gs *GameService) sendSuccessMessage(conn *websocket.Conn, message string) {
-	fullMessage := clearScreen + colorGreen + message + colorReset
-	if err := conn.WriteMessage(websocket.TextMessage, []byte(fullMessage)); err != nil {
-		log.Printf("Error sending message: %v", err)
-	}
+	gs.sendMessage(conn, message, true)
 }
 
 func (gs *GameService) sendErrorMessage(conn *websocket.Conn, message string) {
-	fullMessage := clearScreen + colorRed + message + colorReset
+	fullMessage := colorRed + message + colorReset
 	if err := conn.WriteMessage(websocket.TextMessage, []byte(fullMessage)); err != nil {
 		log.Printf("Error sending error message: %v", err)
 	}
@@ -405,12 +431,20 @@ func (gs *GameService) sendErrorMessage(conn *websocket.Conn, message string) {
 
 func (gs *GameService) sendGameOptions(session *GameSession) {
 	options := `
-🕵️ What would you like to do?
+  What would you like to do?
 - Type 'locations' to list locations 🏠
 - Type 'suspects' to list suspects 👥
 - Type 'examine [location]' to examine a specific location 🔍
 - Type 'interrogate [suspect]' to interrogate a specific suspect 💬
 - Type 'solve' to attempt to solve the case 🔍
 `
-	gs.sendMessage(session.Conn, options)
+	gs.sendMessage(session.Conn, options, true)
+}
+
+func (gs *GameService) waitForUserInput(conn *websocket.Conn) (string, error) {
+	_, message, err := conn.ReadMessage()
+	if err != nil {
+		return "", err
+	}
+	return string(message), nil
 }
