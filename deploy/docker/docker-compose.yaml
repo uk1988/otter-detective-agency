@@ -2,7 +2,7 @@
 version: "3"
 
 services:
-  playerservice:
+  player-service:
     image: vfiftyfive/oda-playerservice:latest
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
@@ -10,7 +10,7 @@ services:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/playerservice"]
 
-  caseservice:
+  case-service:
     image: vfiftyfive/oda-caseservice:latest
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
@@ -18,7 +18,7 @@ services:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/caseservice"]
 
-  evidenceservice:
+  evidence-service:
     image: vfiftyfive/oda-evidenceservice:latest
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
@@ -26,7 +26,7 @@ services:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/evidenceservice"]
 
-  interrogationservice:
+  interrogation-service:
     image: vfiftyfive/oda-interrogationservice:latest
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
@@ -35,7 +35,7 @@ services:
     entrypoint:
       ["/app/wait-for-it.sh", "db:5432", --, "/app/interrogationservice"]
 
-  deductionservice:
+  deduction-service:
     image: vfiftyfive/oda-deductionservice:latest
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
@@ -43,7 +43,7 @@ services:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/deductionservice"]
 
-  gameservice:
+  game-service:
     image: vfiftyfive/oda-gameservice:latest
     ports:
       - "8080:8080"
@@ -54,11 +54,11 @@ services:
       - INTERROGATION_SERVICE_ADDR=interrogationservice:50054
       - DEDUCTION_SERVICE_ADDR=deductionservice:50055
     depends_on:
-      - playerservice
-      - caseservice
-      - evidenceservice
-      - interrogationservice
-      - deductionservice
+      - player-service
+      - case-service
+      - evidence-service
+      - interrogation-service
+      - deduction-service
 
   db:
     image: postgres:13
@@ -66,6 +66,8 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=oda
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 

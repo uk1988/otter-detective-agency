@@ -135,7 +135,7 @@ func (gs *GameService) createPlayer(session *GameSession, name string) {
 		return
 	}
 	session.Player = player
-	gs.sendSuccessMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! 🕵️ Let's get starte", player.Name))
+	gs.sendSuccessMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! 🕵️ Let's get started", player.Name))
 	gs.assignCase(session)
 }
 

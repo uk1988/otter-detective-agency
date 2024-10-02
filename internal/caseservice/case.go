@@ -70,11 +70,11 @@ func (s *Server) ListCases(ctx context.Context, req *casepb.ListCasesRequest) (*
 }
 
 func (s *Server) AssignCaseToPlayer(ctx context.Context, req *casepb.AssignCaseRequest) (*casepb.PlayerCase, error) {
-	query := `INSERT INTO player_cases VALUES ($1, $2, $3) RETURNING id, player_id, case_id, status`
+	query := `INSERT INTO player_cases VALUES ($1, $2, $3) RETURNING player_id, case_id, status`
 	row := s.pool.QueryRow(ctx, query, req.PlayerId, req.CaseId, "in_progress")
 
 	var pc casepb.PlayerCase
-	err := row.Scan(&pc.PlayerId, pc.CaseId, &pc.Status)
+	err := row.Scan(&pc.PlayerId, &pc.CaseId, &pc.Status)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to assign case to player: %v", err)
 	}

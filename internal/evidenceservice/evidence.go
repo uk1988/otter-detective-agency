@@ -56,7 +56,7 @@ func (s *Server) GetEvidence(ctx context.Context, req *evidencepb.GetEvidenceReq
 }
 
 func (s *Server) ListLocations(ctx context.Context, req *evidencepb.ListLocationsRequest) (*evidencepb.LocationList, error) {
-	query := `SELECT DISCTINCT location FROM evidence WHERE case_id = $1`
+	query := `SELECT DISTINCT location FROM evidence WHERE case_id = $1`
 	rows, err := s.pool.Query(ctx, query, req.CaseId)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to list locations: %v", err)

@@ -85,7 +85,7 @@ func main() {
 		handleGameWebSocket(w, r, gameService)
 	})
 
-	log.Printf("Game Service listening on pong :%s\n", port)
+	log.Printf("Game Service listening on port :%s\n", port)
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), r); err != nil {
 		log.Fatalf("Failed to listen and serve: %v", err)
 	}

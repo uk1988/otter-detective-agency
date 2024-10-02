@@ -24,7 +24,7 @@ func NewServer(connString string) (*Server, error) {
 	return &Server{pool: pool}, nil
 }
 
-func (s *Server) CreateNewPlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
+func (s *Server) CreatePlayer(ctx context.Context, req *playerpb.CreatePlayerRequest) (*playerpb.Player, error) {
 	id := uuid.New().String()
 	query := `INSERT INTO players VALUES ($1, $2, $3) RETURNING id, name, cases_solved`
 	row := s.pool.QueryRow(ctx, query, id, req.Name, 0)
