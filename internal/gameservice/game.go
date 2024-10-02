@@ -135,7 +135,12 @@ func (gs *GameService) createPlayer(session *GameSession, name string) {
 		return
 	}
 	session.Player = player
-	gs.sendSuccessMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! Let's get started", player.Name))
+	gs.sendMessage(session.Conn, fmt.Sprintf("Greetings Detective %s! Press Enter to get started ... 🏁", player.Name), false)
+	_, err = gs.waitForUserInput(session.Conn)
+	if err != nil {
+		log.Printf("Error waiting for user input: %v", err)
+		return
+	}
 	gs.assignCase(session)
 }
 
@@ -156,19 +161,28 @@ func (gs *GameService) assignCase(session *GameSession) {
 	session.Case = caseList.Cases[0]
 
 	// Check if the player has already been assigned this case
-	playerCase, err := gs.caseClient.GetPlayerCase(context.Background(), &casepb.GetPlayerCaseRequest{
+	playerCaseResponse, err := gs.caseClient.GetPlayerCase(context.Background(), &casepb.GetPlayerCaseRequest{
 		PlayerId: session.Player.Id,
 	})
-	if err == nil && playerCase.PlayerCase != nil {
-		// Player has already been assigned this case
-		if playerCase.PlayerCase.Status == "solved" {
-			gs.sendErrorMessage(session.Conn, "You've already solved this case. Let's find you a new one!")
-			// Logic to asign a new case - skip for now
-			return
-		} else {
-			gs.sendErrorMessage(session.Conn, "You're already working on this case. Let's continue where you left off!")
-		}
+	if err != nil {
+		log.Printf("Error getting player case: %v", err)
+		gs.sendErrorMessage(session.Conn, "Error getting player case. Please try again later.")
 		return
+	}
+
+	if playerCaseResponse != nil && playerCaseResponse.PlayerCase != nil {
+		if playerCaseResponse.PlayerCase.CaseId == session.Case.Id {
+			if playerCaseResponse.PlayerCase.Status == "solved" {
+				gs.sendErrorMessage(session.Conn, "You have already solved this case. Please try another case.")
+				// Logic to assing a new case - skip for now
+				return
+			} else if playerCaseResponse.PlayerCase.Status == "in_progress" {
+				gs.sendErrorMessage(session.Conn, "You are already working on this case. Please continue.")
+				gs.sendGameOptions(session)
+				return
+
+			}
+		}
 	}
 
 	_, err = gs.caseClient.AssignCaseToPlayer(context.Background(), &casepb.AssignCaseRequest{

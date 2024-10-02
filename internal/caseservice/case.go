@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
@@ -84,13 +85,17 @@ func (s *Server) AssignCaseToPlayer(ctx context.Context, req *casepb.AssignCaseR
 }
 
 func (s *Server) GetPlayerCase(ctx context.Context, req *casepb.GetPlayerCaseRequest) (*casepb.GetPlayerCaseResponse, error) {
-	query := `SELECT pc.player_id, pc.case_id, pc.status, c.title, c.description FROM player_cases pc JOIN cases c ON pc.case_id = c.id WHERE pc.player_id = $1 AND pc.status = 'in_progress'`
+	query := `SELECT pc.player_id, pc.case_id, pc.status, c.title, c.description FROM player_cases pc JOIN cases c ON pc.case_id = c.id WHERE pc.player_id = $1`
 	row := s.pool.QueryRow(ctx, query, req.PlayerId)
 
 	var pc casepb.PlayerCase
 	var c casepb.Case
 	err := row.Scan(&pc.PlayerId, &pc.CaseId, &pc.Status, &c.Title, &c.Description)
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			// No case found for player
+			return nil, nil
+		}
 		return nil, fmt.Errorf("Unable to get player case: %v", err)
 	}
 	return &casepb.GetPlayerCaseResponse{PlayerCase: &pc, Case: &c}, nil
