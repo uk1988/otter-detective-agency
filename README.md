@@ -51,6 +51,7 @@ cd otter-detective-agency
 Start all services using Docker Compose:
 
 ```bash
+cd deploy/docker
 docker-compose up --build
 ```
 
