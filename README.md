@@ -55,7 +55,7 @@ cd deploy/docker
 docker-compose up --build
 ```
 
-This command builds and starts all the services defined in the `docker-compose.yml` file.
+This command builds and starts all the services defined in the `docker-compose.yaml` file.
 
 ### Starting a New Game
 
