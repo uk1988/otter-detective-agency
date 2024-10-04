@@ -4,6 +4,8 @@ version: "3"
 services:
   player-service:
     image: ghcr.io/vfiftyfive/oda-playerservice:latest
+    ports:
+      - "50051:50051"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
     depends_on:
@@ -12,6 +14,8 @@ services:
 
   case-service:
     image: ghcr.io/vfiftyfive/oda-caseservice:latest
+    ports:
+      - "50052:50052"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
     depends_on:
@@ -20,6 +24,8 @@ services:
 
   evidence-service:
     image: ghcr.io/vfiftyfive/oda-evidenceservice:latest
+    ports:
+      - "50053:50053"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
     depends_on:
@@ -28,6 +34,8 @@ services:
 
   interrogation-service:
     image: ghcr.io/vfiftyfive/oda-interrogationservice:latest
+    ports:
+      - "50054:50054"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
     depends_on:
@@ -37,30 +45,24 @@ services:
 
   deduction-service:
     image: ghcr.io/vfiftyfive/oda-deductionservice:latest
+    ports:
+      - "50055:50055"
     environment:
       - DATABASE_URL=postgres://user:password@db:5432/oda
     depends_on:
       - db
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/deductionservice"]
 
-  csi-service:
-    image: ghcr.io/vfiftyfive/oda-csiservice:latest
-    environment:
-      - DATABASE_URL=postgres://user:password@db:5432/oda
-    depends_on:
-      - db
-    entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/csiservice"]
-
   game-service:
     image: ghcr.io/vfiftyfive/oda-gameservice:latest
     ports:
       - "8080:8080"
     environment:
-      - PLAYER_SERVICE_ADDR=playerservice:50051
-      - CASE_SERVICE_ADDR=caseservice:50052
-      - EVIDENCE_SERVICE_ADDR=evidenceservice:50053
-      - INTERROGATION_SERVICE_ADDR=interrogationservice:50054
-      - DEDUCTION_SERVICE_ADDR=deductionservice:50055
+      - PLAYER_SERVICE_ADDR=player-service:50051
+      - CASE_SERVICE_ADDR=cases-ervice:50052
+      - EVIDENCE_SERVICE_ADDR=evidence-service:50053
+      - INTERROGATION_SERVICE_ADDR=interrogation-service:50054
+      - DEDUCTION_SERVICE_ADDR=deduction-service:50055
     depends_on:
       - player-service
       - case-service
