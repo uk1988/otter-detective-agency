@@ -98,4 +98,4 @@ data:
         (suspect_id, 'Where were you on the night of the theft?', 'I was attending a charity gala across town. Hundreds of people can vouch for my presence there.'),
         (suspect_id, 'Have you ever tried to purchase the Golden Fish Statue?', 'Yes, I offered to buy it last year, but the museum refused to sell. It''s a magnificent piece.'),
         (suspect_id, 'Do you know anyone who might have wanted to steal the statue?', 'In my experience, museum insiders are often involved in these kinds of thefts. Have you looked into the staff?');
-    E
+    END $$;
