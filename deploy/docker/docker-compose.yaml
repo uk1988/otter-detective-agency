@@ -54,7 +54,7 @@ services:
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/deductionservice"]
 
   csi-service:
-    image: ghcr.io/vfiftyfive/oda-csiservice:latest
+    image: ghcr.io/vfiftyfive/oda-csiservicev2:latest
     ports:
       - "50057:50057"
     environment:
@@ -64,7 +64,7 @@ services:
     entrypoint: ["/app/wait-for-it.sh", "db:5432", --, "/app/csiservice"]
 
   game-service:
-    image: ghcr.io/vfiftyfive/oda-gameservice:latest
+    image: ghcr.io/vfiftyfive/oda-gameservicev2:latest
     ports:
       - "8080:8080"
     environment:
