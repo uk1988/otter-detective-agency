@@ -56,7 +56,7 @@ docker-playerservice:
     COPY deploy/docker/scripts/wait-for-it.sh .
     RUN chmod +x /app/wait-for-it.sh
     CMD ["/app/playerservice"]
-    SAVE IMAGE vfiftyfive/oda-playerservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-playerservice:latest
 
 # Target to create the final case service image
 docker-caseservice:
@@ -67,7 +67,7 @@ docker-caseservice:
     COPY deploy/docker/scripts/wait-for-it.sh .
     RUN chmod +x /app/wait-for-it.sh
     CMD ["/app/caseservice"]
-    SAVE IMAGE vfiftyfive/oda-caseservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-caseservice:latest
 
 # Target to create the final evidence service image
 docker-evidenceservice:
@@ -78,7 +78,7 @@ docker-evidenceservice:
     COPY deploy/docker/scripts/wait-for-it.sh .
     RUN chmod +x /app/wait-for-it.sh
     CMD ["/app/evidenceservice"]
-    SAVE IMAGE vfiftyfive/oda-evidenceservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-evidenceservice:latest
 
 # Target to create the final interrogation service image
 docker-interrogationservice:
@@ -89,7 +89,7 @@ docker-interrogationservice:
     COPY deploy/docker/scripts/wait-for-it.sh .
     RUN chmod +x /app/wait-for-it.sh
     CMD ["/app/interrogationservice"]
-    SAVE IMAGE vfiftyfive/oda-interrogationservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-interrogationservice:latest
 
 # Target to create the final deduction service image
 docker-deductionservice:
@@ -100,7 +100,7 @@ docker-deductionservice:
     COPY deploy/docker/scripts/wait-for-it.sh .
     RUN chmod +x /app/wait-for-it.sh
     CMD ["/app/deductionservice"]
-    SAVE IMAGE vfiftyfive/oda-deductionservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-deductionservice:latest
 
 # Target to create the final game service image
 docker-gameservice:
@@ -108,7 +108,7 @@ docker-gameservice:
     WORKDIR /app
     COPY +build-gameservice/gameservice .
     CMD ["/app/gameservice"]
-    SAVE IMAGE vfiftyfive/oda-gameservice:latest
+    SAVE IMAGE --push ghcr.io/vfiftyfive/oda-gameservice:latest
 
 # Target to build and save all images
 docker-all:
