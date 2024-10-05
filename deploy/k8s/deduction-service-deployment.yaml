@@ -31,13 +31,13 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
-                  key: POSTGRES_USER
+                  name: deduction-creds
+                  key: username
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: db-secret
-                  key: POSTGRES_PASSWORD
+                  name: deduction-creds
+                  key: password
             - name: DATABASE_URL
               value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/oda
           image: ghcr.io/vfiftyfive/oda-deductionservice:latest
