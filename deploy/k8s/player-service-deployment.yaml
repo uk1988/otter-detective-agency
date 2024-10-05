@@ -17,6 +17,7 @@ spec:
       annotations:
         kompose.cmd: kompose -f ../docker/docker-compose.yaml convert
         kompose.version: 1.34.0 (HEAD)
+        credentials-operator.otterize.com/user-password-secret-name: player-creds
       labels:
         io.kompose.service: player-service
     spec:
