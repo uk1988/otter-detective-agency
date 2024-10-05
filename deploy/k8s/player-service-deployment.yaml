@@ -27,8 +27,18 @@ spec:
             - --
             - /app/playerservice
           env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
             - name: DATABASE_URL
-              value: postgres://user:password@db:5432/oda
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/oda
           image: ghcr.io/vfiftyfive/oda-playerservice:latest
           name: player-service
           ports:
