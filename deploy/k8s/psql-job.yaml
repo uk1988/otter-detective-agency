@@ -1,0 +1,30 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-init-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: psql
+          image: postgres:13
+          command: ["/bin/sh", "-c"]
+          args:
+            - PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -f /scripts/init.sql
+          env:
+            - name: POSTGRES_PASSWORD
+              value: password
+            - name: POSTGRES_HOST
+              value: "db" # Replace with your PostgreSQL service name
+            - name: POSTGRES_USER
+              value: "user" # Replace with your PostgreSQL username
+            - name: POSTGRES_DB
+              value: "oda" # Replace with your database name
+          volumeMounts:
+            - name: init-script
+              mountPath: /scripts
+      restartPolicy: Never
+      volumes:
+        - name: init-script
+          configMap:
+            name: db-init-script
