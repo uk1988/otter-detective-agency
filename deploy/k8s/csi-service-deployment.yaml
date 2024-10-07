@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out /tmp
+    kompose.version: 1.34.0 (HEAD)
+  labels:
+    io.kompose.service: csi-service
+  name: csi-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: csi-service
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --out /tmp
+        kompose.version: 1.34.0 (HEAD)
+        credentials-operator.otterize.com/user-password-secret-name: csi-creds
+      labels:
+        io.kompose.service: csi-service
+    spec:
+      containers:
+        - command:
+            - /app/wait-for-it.sh
+            - db:5432
+            - --
+            - /app/csiservice
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: csi-creds
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: csi-creds
+                  key: password
+            - name: DATABASE_URL
+              value: postgres://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@db:5432/oda
+          image: ghcr.io/vfiftyfive/oda-csiservicev2:latest
+          name: csi-service
+          ports:
+            - containerPort: 50057
+              protocol: TCP
+      restartPolicy: Always

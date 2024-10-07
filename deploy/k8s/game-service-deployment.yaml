@@ -32,7 +32,9 @@ spec:
               value: interrogation-service:50054
             - name: PLAYER_SERVICE_ADDR
               value: player-service:50051
-          image: ghcr.io/vfiftyfive/oda-gameservice:latest
+            - name: CSI_SERVICE_ADDR
+              value: csi-service:50057
+          image: ghcr.io/vfiftyfive/oda-gameservicev2:latest
           name: game-service
           ports:
             - containerPort: 8080
