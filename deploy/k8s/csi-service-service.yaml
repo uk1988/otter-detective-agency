@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --out /tmp
+    kompose.version: 1.34.0 (HEAD)
+  labels:
+    io.kompose.service: csi-service
+  name: csi-service
+spec:
+  ports:
+    - name: "50057"
+      port: 50057
+      targetPort: 50057
+  selector:
+    io.kompose.service: csi-service
